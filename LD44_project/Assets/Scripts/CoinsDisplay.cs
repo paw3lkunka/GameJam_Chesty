@@ -8,15 +8,20 @@ using TMPro;
 public class CoinsDisplay : MonoBehaviour
 {
     private Floor floor;
-    private TextMeshPro text;
+    private TextMeshProUGUI text;
     private SpriteRenderer sprite;
+
+    void Set(uint amount)
+    {
+    }
 
     void Start()
     {
-        this.SnapPosition();
-        floor = GetComponent<Floor>();
+        floor = GetComponentInParent<Floor>();
         sprite = GetComponent<SpriteRenderer>();
-        text = GetComponentInChildren<TextMeshPro>();
+        text = GetComponentInChildren<TextMeshProUGUI>();
+
+        transform.position = floor.transform.position;
     }
 
     void Update()
@@ -39,7 +44,7 @@ public class CoinsDisplay : MonoBehaviour
             text.enabled = true;
             text.text = amount.ToString();
         }
-        else if (amount > 1000)
+        else if (amount >= 1000)
         {
             sprite.enabled = true;
             text.enabled = true;
