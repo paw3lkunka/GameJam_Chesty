@@ -5,6 +5,8 @@ using System;
 
 public abstract class _Tile : _GridElement, IHeapItem<_Tile>
 {
+    public bool discovered = false;
+
     public int gCost;
     public int hCost;
     public int fCost { get => gCost + hCost; }

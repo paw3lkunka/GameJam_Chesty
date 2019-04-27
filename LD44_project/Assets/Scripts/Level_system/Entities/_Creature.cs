@@ -21,9 +21,13 @@ public abstract class _Creature : _Entity
 
     public void CollectCoins()
     {
-        ref uint tileCoins = ref (_LevelController.instance.tiles[X, Y] as Floor).coins;
-        money += tileCoins;
-        tileCoins = 0;
+        try
+        {
+            ref uint tileCoins = ref (_LevelController.instance.tiles[X, Y] as Floor).coins;
+            money += tileCoins;
+            tileCoins = 0;
+        }
+        catch (NullReferenceException) { }
     }
     #endregion
 
@@ -126,7 +130,3 @@ public abstract class _Creature : _Entity
         }
     }
 }
-
-
-
-//dupa dupa dupa dupad
