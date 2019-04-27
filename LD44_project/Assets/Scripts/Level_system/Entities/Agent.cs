@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Agent : MonoBehaviour
+public class Agent : _Entity
 {
     // Start is called before the first frame update
     void Start()

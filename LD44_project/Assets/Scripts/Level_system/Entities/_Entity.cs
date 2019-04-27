@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static _OurLib;
+using System;
 
-public class Wall : _Tile
+public abstract class _Entity : _GridElement
 {
-    public override bool Walkable => false;
 
 }

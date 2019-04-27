@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Floor : _Tile
 {
+    public override bool Walkable => true;
     // Three main reference fields for storing information about contents of current floor tile
-    private Agent agent;
-    private Thing thing;
-    private uint coin;
+    public Agent agent;
+    public Thing thing;
+    public uint coins;
 }
