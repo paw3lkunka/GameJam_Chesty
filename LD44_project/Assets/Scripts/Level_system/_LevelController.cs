@@ -12,12 +12,6 @@ public class _LevelController : MonoBehaviour
 
     [SerializeField]
     public _Tile[,] tiles;
-    [SerializeField]
-    public Floor[,] floor;
-    [SerializeField]
-    private Vector2Int levelSize;
-
-   
 
     private void Awake()
     {
@@ -47,7 +41,6 @@ public class _LevelController : MonoBehaviour
         }
 
         tiles = new _Tile[maxX + 1, maxY + 1];
-        floor = new Floor[maxX + 1, maxY + 1];
 
         foreach (_Tile tile in FindObjectsOfType<_Tile>())
         {
@@ -55,20 +48,18 @@ public class _LevelController : MonoBehaviour
                 tiles[tile.X, tile.Y] = tile;
             else
                 throw new DuplicatedTile(tiles[tile.X, tile.Y], tile);
-
-            if (tile.GetType() == typeof(Floor))
-                floor[tile.X, tile.Y] = tile as Floor;
         }
 
         foreach (_Entity obj in FindObjectsOfType<_Entity>())
         {
+            _Tile tile = tiles[obj.X, obj.Y];
             try
             {
-                if (obj.GetType() == typeof(Agent))
-                    floor[obj.X, obj.Y].agent = obj as Agent;
+                if (obj is Agent && tile is Floor )
+                    (tile as Floor).agent = obj as Agent;
 
-                else if (obj.GetType() == typeof(Thing))
-                    floor[obj.X, obj.Y].thing = obj as Thing;
+                else if (obj is Thing && tile is Floor)
+                    (tile as Floor).thing = obj as Thing;
             }
             catch (NullReferenceException)
             {
