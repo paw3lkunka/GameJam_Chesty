@@ -26,13 +26,14 @@ public class Door : _Tile
         spriteRenderer.sprite = isOpen ? doorOpen : doorClosed;
     }
 
-    public void Open(_Creature creature)
+    public bool Open(_Creature creature)
     {
         if(creature is Player)
         {
             spriteRenderer.sprite = doorOpen;
             isOpen = true;
             _LevelController.instance.monstersTilemap[(int)transform.position.x, (int)transform.position.y] = true;
+            return true;
         }
         else if(creature is Knight)
         {
@@ -40,13 +41,16 @@ public class Door : _Tile
             {
                 doorHitDurability--;
                 spriteRenderer.sprite = crackDecals[doorHitDurability];
+                return false;
             }
             else
             {
                 isOpen = true;
                 _LevelController.instance.monstersTilemap[(int)transform.position.x, (int)transform.position.y] = true;
                 spriteRenderer.sprite = doorDestroyed;
+                return true;
             }
         }
+        return false;
     }
 }

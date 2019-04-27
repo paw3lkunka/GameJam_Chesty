@@ -10,10 +10,13 @@ public class _LevelController : MonoBehaviour
 {
     public static _LevelController instance = null;
 
-    public GameObject player;
+    public Player player;
     public _Tile[,] tiles;
 
-    //public event Action<D>
+    [SerializeField]
+    private float turnTime = 5f;
+    private float elapsedTime = 0f;
+    public event Action<int, int> ForceMovement;
 
     // Bool tilemaps for storing the pass-through block information
     public bool[,] knightsTilemap;
@@ -21,24 +24,83 @@ public class _LevelController : MonoBehaviour
     // Temporarily hidden - as it should be generated in the respectful entities
     // public static PathFind.Grid grid;
 
+    private IEnumerator timerCoroutine;
+
+    private Vector2 currentFrameAxis;
+    private Vector2 previousFrameAxis;
+
+    public int stage = 1;
+
     private void Awake()
     {
         // ==========================
         // Singleton initialization
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
-        else if(instance != this)
+        else if (instance != this)
         {
             Destroy(gameObject);
         }
         // ==========================
+
+        ForceMovement += (int a,int b) => Debug.Log("Event aaaaa");
+    }
+
+    public void Update()
+    {
+        currentFrameAxis.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
+        if ( (currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y || _Creature.repeatMovement == true) && (currentFrameAxis.x != 0 || currentFrameAxis.y != 0))
+        {
+            (int h, int v) arg = (0, 0);
+            StopTimer();
+                 if (currentFrameAxis.x > 0) arg = (1, 0);  //player.MoveHoriz(1);
+            else if (currentFrameAxis.x < 0) arg = (-1, 0); //player.MoveHoriz(-1);
+            else if (currentFrameAxis.y > 0) arg = (0, 1);  //player.MoveVert(1);
+            else if (currentFrameAxis.y < 0) arg = (0, -1); //player.MoveVert(-1);
+            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            ForceMovement(arg.h, arg.v);
+            StartTimer();
+        }
+
+        previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
+
+
+    }
+
+    private void StartTimer()
+    {
+        if (timerCoroutine == null)
+        {
+            timerCoroutine = GlobalTimer();
+            StartCoroutine(timerCoroutine);
+        }
+    }
+
+    private void StopTimer()
+    {
+        if(timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+            timerCoroutine = null;
+        }
+    }
+
+    private IEnumerator GlobalTimer()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(turnTime);
+            ForceMovement(0, 0);
+        }
     }
 
     private void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        StartTimer();
 
         // Generating current level bounds dynamically **********************
         int maxX = 0, maxY = 0;

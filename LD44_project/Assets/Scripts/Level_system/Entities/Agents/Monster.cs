@@ -2,14 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static _OurLib;
+using System;
 
 public class Monster : _Agent
 {
-    public override bool DealWithTrap()
-    {
-        return true;
-    }
-
     private void Start()
     {
         
@@ -32,5 +28,30 @@ public class Monster : _Agent
             //}
         }
 
+    }
+
+    protected override void Translate(int x, int y)
+    {
+        StartMovement(X + x, Y + y);
+    }
+    public override bool DealWithTrap()
+    {
+        return true;
+    }
+
+    public override bool DealWithKnight()
+    {
+        Fight((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).agent as Knight);
+        return true;
+    }
+
+    public override bool DealWithMonster()
+    {
+        return true;
+    }
+
+    public override bool DealWithDoor()
+    {
+        return false;
     }
 }
