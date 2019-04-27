@@ -83,9 +83,18 @@ public abstract class _Creature : _Entity
         {
             _Tile tempTile = _LevelController.instance.tiles[(int)endPos.x, (int)endPos.y];
             // Tile at offset position must be floor, otherwise do nothing (this should change as here the enemies move event should be invoked)
-            if (tempTile is Floor && tempTile.Walkable && !isMoving) // Change _LevelController to LC later
+            if (tempTile is Floor && tempTile.Walkable && !isMoving) 
             {
-                StartMovement();
+                Floor floor = tempTile as Floor;
+
+                if ((floor.thing as Trap)?.armed ?? false)
+                {
+                    if (DealWithTrap())
+                        StartMovement();
+                }
+                else
+                    StartMovement();
+
             }
             else if (tempTile is Door && !tempTile.Walkable && !isMoving)
             {
@@ -109,6 +118,10 @@ public abstract class _Creature : _Entity
             // Do nothing if index is out of range
         }
     }
+
+    public abstract bool DealWithTrap();
+    //public abstract bool DealWithKnigth();
+    //public abstract bool DealWithMonster();
 
     private void StartMovement()
     {

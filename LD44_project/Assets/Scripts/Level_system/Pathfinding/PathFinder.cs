@@ -16,10 +16,10 @@ public class PathFinder : MonoBehaviour
 
     public void FindPath(_GridElement target)               // changes value of lastHops dictionary in tile, looks like last-hop table for specific agents
     {
-        _Tile startTile = LC.tiles[agent.X, agent.Y];
-        _Tile targetTile = LC.tiles[target.X, target.Y];
+        _Tile startTile = _LevelController.instance.tiles[agent.X, agent.Y];
+        _Tile targetTile = _LevelController.instance.tiles[target.X, target.Y];
 
-        Heap<_Tile> openSet = new Heap<_Tile>(LC.tiles.Length);
+        Heap<_Tile> openSet = new Heap<_Tile>(_LevelController.instance.tiles.Length);
         HashSet<_Tile> closedSet = new HashSet<_Tile>();
         openSet.Add(startTile);
 
@@ -64,14 +64,14 @@ public class PathFinder : MonoBehaviour
     public List<_Tile> GetPath(_GridElement target)             // returns current path based on current lastHops for an agent
     {
         List<_Tile> path = new List<_Tile>();
-        _Tile agentTile = LC.tiles[agent.X, agent.Y];
-        _Tile currentTile = LC.tiles[target.X, target.Y];
+        _Tile agentTile = _LevelController.instance.tiles[agent.X, agent.Y];
+        _Tile currentTile = _LevelController.instance.tiles[target.X, target.Y];
 
         int i = 0;
         while(currentTile != agentTile || i < 1000)
         {
             path.Add(currentTile);
-            currentTile = LC.tiles[target.X, target.Y].lastHops[agent];
+            currentTile = _LevelController.instance.tiles[target.X, target.Y].lastHops[agent];
 
             i++;
             if (i == 1000) Debug.Log("1000 times");
@@ -92,7 +92,7 @@ public class PathFinder : MonoBehaviour
                     continue;
                 try
                 {
-                    neighbours.Add(LC.tiles[tile.X + i, tile.Y + j]);
+                    neighbours.Add(_LevelController.instance.tiles[tile.X + i, tile.Y + j]);
                 }
                 catch(IndexOutOfRangeException){}
             }
