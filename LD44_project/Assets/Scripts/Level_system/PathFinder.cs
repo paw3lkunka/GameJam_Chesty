@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+//using System.Diagnostics;
 using static _OurLib;
 
 public class PathFinder : MonoBehaviour
@@ -13,23 +14,26 @@ public class PathFinder : MonoBehaviour
         agent = GetComponent<Agent>();
     }
 
-    public void FindPath(_GridElement target)               // changes value of parents dictionary in tile, looks like last-hop table for specific agents
+    public void FindPath(_GridElement target)               // changes value of lastHops dictionary in tile, looks like last-hop table for specific agents
     {
         _Tile startTile = LC.tiles[agent.X, agent.Y];
         _Tile targetTile = LC.tiles[target.X, target.Y];
 
-        List<_Tile> openSet = new List<_Tile>();
+        Heap<_Tile> openSet = new Heap<_Tile>(LC.tiles.Length);
         HashSet<_Tile> closedSet = new HashSet<_Tile>();
         openSet.Add(startTile);
 
         while (openSet.Count > 0)
         {
+            _Tile currentTile = openSet.RemoveFirst();      // THE FUTURE IS NOW OLD MAN
+            /*
             _Tile currentTile = openSet[0];
             for (int i = 0; i < openSet.Count; i++)
                 if (openSet[i].fCost < currentTile.fCost || openSet[i].fCost == currentTile.fCost && openSet[i].hCost < currentTile.hCost)
                     currentTile = openSet[i];
 
             openSet.Remove(currentTile);
+            */
             closedSet.Add(currentTile);
 
             if (currentTile == targetTile)
@@ -45,7 +49,7 @@ public class PathFinder : MonoBehaviour
                 {
                     neighbour.gCost = newMovementCostToNeighbour;
                     neighbour.hCost = GetDistance(neighbour, targetTile);
-                    neighbour.parents[agent] = currentTile; 
+                    neighbour.lastHops[agent] = currentTile; 
 
                     if (!(openSet.Contains(neighbour)))
                         openSet.Add(neighbour);
@@ -54,7 +58,7 @@ public class PathFinder : MonoBehaviour
         }
     }
 
-    public List<_Tile> GetPath(_GridElement target)             // returns current path based on current parents for an agent
+    public List<_Tile> GetPath(_GridElement target)             // returns current path based on current lastHops for an agent
     {
         List<_Tile> path = new List<_Tile>();
         _Tile agentTile = LC.tiles[agent.X, agent.Y];
@@ -63,14 +67,14 @@ public class PathFinder : MonoBehaviour
         while(currentTile != agentTile)
         {
             path.Add(currentTile);
-            currentTile = LC.tiles[target.X, target.Y].parents[agent];
+            currentTile = LC.tiles[target.X, target.Y].lastHops[agent];
         }
 
         path.Reverse();
         return path;
     }
 
-    public static List<_Tile> NeighboursOf(_Tile tile)
+    public List<_Tile> NeighboursOf(_Tile tile)
     {
         List<_Tile> neighbours = new List<_Tile>();
 
