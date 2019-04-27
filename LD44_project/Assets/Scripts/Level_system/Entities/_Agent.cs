@@ -4,5 +4,4 @@ using UnityEngine;
 
 public abstract class _Agent : _Creature
 {
-    
 }

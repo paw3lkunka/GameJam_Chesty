@@ -6,5 +6,4 @@ using System;
 
 public abstract class _Entity : _GridElement
 {
-
 }
