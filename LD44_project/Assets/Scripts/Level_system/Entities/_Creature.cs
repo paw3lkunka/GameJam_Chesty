@@ -6,6 +6,27 @@ using UnityEngine;
 [System.Serializable]
 public abstract class _Creature : _Entity
 {
+    #region Money
+    [SerializeField]
+    protected uint money = 20;
+    public virtual void DropCoins(uint amount)
+    {
+        if ( amount <= money)
+        {
+            (_LevelController.instance.tiles[X, Y] as Floor).coins += amount;
+            money -= amount;
+
+        }
+    }
+
+    public void CollectCoins()
+    {
+        ref uint tileCoins = ref (_LevelController.instance.tiles[X, Y] as Floor).coins;
+        money += tileCoins;
+        tileCoins = 0;
+    }
+    #endregion
+
 #pragma warning disable
     [SerializeField]
     private float movementSpeed = 5f;

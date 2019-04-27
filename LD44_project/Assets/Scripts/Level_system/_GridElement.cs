@@ -12,7 +12,8 @@ public abstract class _GridElement : MonoBehaviour
     {
         this.SnapPosition();
         if (transform.position.x < 0 || transform.position.y < 0)
-            throw new InvalidGridObjectPosition(this);
+            Debug.Log(new InvalidGridObjectPosition(this).Message);
+            //throw new InvalidGridObjectPosition(this);
     }
 }
 public class InvalidGridObjectPosition : Exception

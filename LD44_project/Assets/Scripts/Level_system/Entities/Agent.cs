@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Agent : _Entity
+public class Agent : _Creature
 {
-    
 }
