@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public static class _OurLib
 {
@@ -12,5 +13,20 @@ public static class _OurLib
     public static void SnapPosition(this MonoBehaviour mb)
     {
         mb.transform.position = Snap(mb.transform.position);
+    }
+
+    public static int IntCord( this MonoBehaviour mb, char axis)
+    {
+        switch (axis)
+        {
+            case 'x':
+                return Mathf.RoundToInt(mb.transform.position.x);
+            case 'y':
+                return Mathf.RoundToInt(mb.transform.position.y);
+            case 'z':
+                return Mathf.RoundToInt(mb.transform.position.z);
+            default:
+                throw new ArgumentException("valid arguments: 'x','y','z'");
+        }
     }
 }
