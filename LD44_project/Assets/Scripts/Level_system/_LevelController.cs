@@ -10,7 +10,7 @@ public class _LevelController : MonoBehaviour
 {
     public static _LevelController instance = null;
 
-    public GameObject player = GameObject.FindGameObjectWithTag("Player");
+    public GameObject player;
     public _Tile[,] tiles;
 
     //public event Action<D>
@@ -38,6 +38,8 @@ public class _LevelController : MonoBehaviour
 
     private void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
+
         // Generating current level bounds dynamically **********************
         int maxX = 0, maxY = 0;
 

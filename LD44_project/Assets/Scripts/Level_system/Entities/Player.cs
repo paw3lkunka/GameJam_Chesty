@@ -64,7 +64,10 @@ public class Player : _Creature
             CollectCoins();
         if (coinsAutoCollect.x != X || coinsAutoCollect.y != Y)
             coinsAutoCollect.state = true;
-
+    }
+    public override bool DealWithTrap()
+    {
+        return false;
     }
 
 }
