@@ -10,11 +10,21 @@ public class _LevelController : MonoBehaviour
 {
     public static _LevelController instance = null;
 
-    [SerializeField]
+    public GameObject player = GameObject.FindGameObjectWithTag("Player");
     public _Tile[,] tiles;
+
+    //public event Action<D>
+
+    // Bool tilemaps for storing the pass-through block information
+    public bool[,] knightsTilemap;
+    public bool[,] monstersTilemap;
+    // Temporarily hidden - as it should be generated in the respectful entities
+    // public static PathFind.Grid grid;
 
     private void Awake()
     {
+        // ==========================
+        // Singleton initialization
         if(instance == null)
         {
             instance = this;
@@ -23,25 +33,25 @@ public class _LevelController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        // Uncomment if you wish the level controller to persist between the scenes
-        // Note: this is probably not needed in our case
-        //      DontDestroyOnLoad(gameObject);
+        // ==========================
     }
+
     private void Start()
     {
-
+        // Generating current level bounds dynamically **********************
         int maxX = 0, maxY = 0;
 
         foreach (_GridElement element in FindObjectsOfType<_GridElement>())
         {
-
             maxX = (int)(maxX < element.X ? element.X : maxX);
             maxY = (int)(maxY < element.Y ? element.Y : maxY);
         }
+        // *****************************************************************
 
+        // Array storing every tile on the map
         tiles = new _Tile[maxX + 1, maxY + 1];
 
+        // Filling the tiles array *****************************************
         foreach (_Tile tile in FindObjectsOfType<_Tile>())
         {
             if ( tiles[tile.X, tile.Y] == null)
@@ -49,7 +59,9 @@ public class _LevelController : MonoBehaviour
             else
                 throw new DuplicatedTile(tiles[tile.X, tile.Y], tile);
         }
+        // ******************************************************************
 
+        // Filling inital tile informations (entities) **********************
         foreach (_Entity obj in FindObjectsOfType<_Entity>())
         {
             _Tile tile = tiles[obj.X, obj.Y];
@@ -64,6 +76,34 @@ public class _LevelController : MonoBehaviour
             catch (NullReferenceException)
             {
                 throw new InvalidGridObjectPosition(obj);
+            }
+        }
+        // ********************************************************************
+
+        // Creating knights and monsters arrays
+        knightsTilemap = new bool[maxX + 1, maxY + 1];
+        monstersTilemap = new bool[maxX + 1, maxY + 1];
+
+        for (int i = 0; i < knightsTilemap.GetLength(0); i++)
+        {
+            for (int j = 0; j < knightsTilemap.GetLength(1); j++)
+            {
+                // Getting info from tile data
+                if (tiles[i, j] is Wall)
+                {
+                    knightsTilemap[i, j] = false;
+                    monstersTilemap[i, j] = false;
+                }
+                else if (tiles[i, j] is Floor)
+                {
+                    knightsTilemap[i, j] = true;
+                    monstersTilemap[i, j] = true;
+                }
+                else if (tiles[i, j] is Door)
+                {
+                    knightsTilemap[i, j] = true;
+                    monstersTilemap[i, j] = (tiles[i, j] as Door).Walkable;
+                }
             }
         }
     }

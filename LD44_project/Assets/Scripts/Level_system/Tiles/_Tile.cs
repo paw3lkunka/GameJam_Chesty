@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public abstract class _Tile : _GridElement, IHeapItem<_Tile>
+public abstract class _Tile : _GridElement
 {
     public int gCost;
     public int hCost;

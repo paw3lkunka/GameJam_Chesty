@@ -8,6 +8,16 @@ public class Player : _Creature
 {
     public event Action LostEvent;
 
+    private Vector2 currentFrameAxis;
+    private Vector2 previousFrameAxis;
+
+    private bool isMovingLastFrame;
+
+    private void Awake()
+    {
+        LostEvent += _GameOver.GameOver;
+    }
+
     public void AddMoney(uint x) => money += x;
     public void SubMoney(uint x)
     {
@@ -25,18 +35,6 @@ public class Player : _Creature
         coinsAutoCollect = (false, X, Y);
         base.DropCoins( amount );
     }
-
-
-    private void Awake()
-    {
-        LostEvent += _GameOver.GameOver;
-    }
-
-    private Vector2 currentFrameAxis;
-    private Vector2 previousFrameAxis;
-
-    private bool isMovingLastFrame;
-
 
     private new void Update()
     {

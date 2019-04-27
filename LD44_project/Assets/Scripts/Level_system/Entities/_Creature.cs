@@ -42,6 +42,7 @@ public abstract class _Creature : _Entity
     private Vector2 startPos;
     private Vector2 endPos;
 
+    #region Movement
     /// <summary>
     /// Up is positive, down is negative
     /// </summary>
@@ -65,9 +66,8 @@ public abstract class _Creature : _Entity
     /// <param name="y">Up = 1; Right = -1</param>
     private void Move(int x, int y)
     {
-        Debug.Log("Invoked Move!");
-        // Temporarily we can move only by one tile at a time. This can be easily changed if needed.
-        if (x > 1 || x < -1 || y > 1 || y < -1) throw new ArgumentOutOfRangeException(String.Format("Can only move by 1 tile at a time! (Tried moving {0} tiles horizontal and {1} tiles vertical)", x, y));
+        if (x > 1 || x < -1 || y > 1 || y < -1)
+            throw new ArgumentOutOfRangeException(String.Format("Can only move by 1 tile at a time! (Tried moving {0} tiles horizontal and {1} tiles vertical)", x, y));
 
         if (!isMoving)
         {
@@ -79,7 +79,7 @@ public abstract class _Creature : _Entity
         {
             _Tile tempTile = _LevelController.instance.tiles[(int)endPos.x, (int)endPos.y];
             // Tile at offset position must be floor, otherwise do nothing (this should change as here the enemies move event should be invoked)
-            if (tempTile is Floor && tempTile.Walkable && !isMoving) // Change _LevelController to LC later
+            if (tempTile is Floor && tempTile.Walkable && !isMoving)
             {
                 StartMovement();
             }
@@ -112,6 +112,7 @@ public abstract class _Creature : _Entity
         startTime = Time.time;
         isMoving = true;
     }
+    #endregion 
 
     protected void Update()
     {
