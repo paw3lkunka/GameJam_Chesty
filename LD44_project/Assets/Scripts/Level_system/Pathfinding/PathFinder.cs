@@ -23,7 +23,8 @@ public class PathFinder : MonoBehaviour
         HashSet<_Tile> closedSet = new HashSet<_Tile>();
         openSet.Add(startTile);
 
-        while (openSet.Count > 0)
+        int i = 0;
+        while (openSet.Count > 0 || i < 1000)
         {
             _Tile currentTile = openSet.RemoveFirst();      // THE FUTURE IS NOW OLD MAN
             /*
@@ -55,6 +56,8 @@ public class PathFinder : MonoBehaviour
                         openSet.Add(neighbour);
                 }
             }
+            i++;
+            if (i == 1000) Debug.Log("1000 times");
         }
     }
 
@@ -64,10 +67,14 @@ public class PathFinder : MonoBehaviour
         _Tile agentTile = LC.tiles[agent.X, agent.Y];
         _Tile currentTile = LC.tiles[target.X, target.Y];
 
-        while(currentTile != agentTile)
+        int i = 0;
+        while(currentTile != agentTile || i < 1000)
         {
             path.Add(currentTile);
             currentTile = LC.tiles[target.X, target.Y].lastHops[agent];
+
+            i++;
+            if (i == 1000) Debug.Log("1000 times");
         }
 
         path.Reverse();

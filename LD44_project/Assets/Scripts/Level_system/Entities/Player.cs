@@ -62,14 +62,11 @@ public class Player : _Creature
 
         previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
 
-    }
-
         if (coinsAutoCollect.state)
             CollectCoins();
         if (coinsAutoCollect.x != X || coinsAutoCollect.y != Y)
             coinsAutoCollect.state = true;
 
-        //previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
     }
 
 }

@@ -126,3 +126,7 @@ public abstract class _Creature : _Entity
         }
     }
 }
+
+
+
+//dupa dupa dupa dupad
