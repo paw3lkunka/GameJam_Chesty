@@ -70,7 +70,7 @@ public class PathFinder : MonoBehaviour
         return path;
     }
 
-    public List<_Tile> NeighboursOf(_Tile tile)
+    public static List<_Tile> NeighboursOf(_Tile tile)
     {
         List<_Tile> neighbours = new List<_Tile>();
 
