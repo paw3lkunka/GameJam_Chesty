@@ -6,7 +6,7 @@ public class Floor : _Tile
 {
     public override bool Walkable => true;
     // Three main reference fields for storing information about contents of current floor tile
-    public Agent agent;
+    public _Agent agent;
     public Thing thing;
     public uint coins;
 }

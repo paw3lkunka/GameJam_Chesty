@@ -55,8 +55,8 @@ public class _LevelController : MonoBehaviour
             _Tile tile = tiles[obj.X, obj.Y];
             try
             {
-                if (obj is Agent && tile is Floor )
-                    (tile as Floor).agent = obj as Agent;
+                if (obj is _Agent && tile is Floor )
+                    (tile as Floor).agent = obj as _Agent;
 
                 else if (obj is Thing && tile is Floor)
                     (tile as Floor).thing = obj as Thing;

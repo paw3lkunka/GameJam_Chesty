@@ -13,6 +13,8 @@ public abstract class _Creature : _Entity
     private AnimationCurve movementCurve;
 #pragma warning restore
 
+    public static bool repeatMovement = false;
+
     private bool isMoving = false;
     private float startTime;
     
@@ -40,21 +42,34 @@ public abstract class _Creature : _Entity
     /// </summary>
     /// <param name="x">Right = 1; Left = -1</param>
     /// <param name="y">Up = 1; Right = -1</param>
-    public void Move(int x, int y)
+    private void Move(int x, int y)
     {
+        Debug.Log("Invoked Move!");
         // Temporarily we can move only by one tile at a time. This can be easily changed if needed.
         if (x > 1 || x < -1 || y > 1 || y < -1) throw new ArgumentOutOfRangeException(String.Format("Can only move by 1 tile at a time! (Tried moving {0} tiles horizontal and {1} tiles vertical)", x, y));
 
         if (!isMoving)
         {
+            repeatMovement = false;
             endPos = new Vector2((int)transform.position.x + x, (int)transform.position.y + y);
         }
 
         try
         {
+            _Tile tempTile = _LevelController.instance.tiles[(int)endPos.x, (int)endPos.y];
             // Tile at offset position must be floor, otherwise do nothing (this should change as here the enemies move event should be invoked)
-            if (_LevelController.instance.tiles[(int)endPos.x, (int)endPos.y].Walkable && !isMoving) // Change _LevelController to LC later
+            if (tempTile is Floor && tempTile.Walkable && !isMoving) // Change _LevelController to LC later
             {
+                StartMovement();
+            }
+            else if (tempTile is Door && !tempTile.Walkable && !isMoving)
+            {
+                Debug.Log("Trying to open");
+                (tempTile as Door).Open(this);
+            }
+            else if (tempTile is Door && tempTile.Walkable && !isMoving)
+            {
+                endPos = new Vector2(tempTile.X + x, tempTile.Y + y);
                 startPos = transform.position;
                 startTime = Time.time;
                 isMoving = true;
@@ -70,12 +85,23 @@ public abstract class _Creature : _Entity
         }
     }
 
+    private void StartMovement()
+    {
+        startPos = transform.position;
+        startTime = Time.time;
+        isMoving = true;
+    }
+
     protected void Update()
     {
         if (isMoving)
         {
             transform.position = Vector2.Lerp(startPos, endPos, movementCurve.Evaluate(Time.time - startTime) * movementSpeed);
-            if ((Vector2)transform.position == endPos) isMoving = false;
+            if ((Vector2)transform.position == endPos)
+            {
+                repeatMovement = true;
+                isMoving = false;
+            }
         }
     }
 }

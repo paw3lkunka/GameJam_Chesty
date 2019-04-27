@@ -8,7 +8,7 @@ public abstract class _Tile : _GridElement, IHeapItem<_Tile>
     public int gCost;
     public int hCost;
     public int fCost { get => gCost + hCost; }
-    public Dictionary<Agent, _Tile> lastHops;       // last-hops for specific agent while determining his best path to the taget
+    public Dictionary<_Agent, _Tile> lastHops;       // last-hops for specific agent while determining his best path to the taget
     private int heapIndex;
 
     public int HeapIndex

@@ -5,14 +5,17 @@ using UnityEngine;
 public class Player : _Creature
 {
     private Vector2 currentFrameAxis;
-    //private Vector2 previousFrameAxis;
+    private Vector2 previousFrameAxis;
+
+    private bool isMovingLastFrame;
 
     private new void Update()
     {
         base.Update();
+
         currentFrameAxis.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        if( (currentFrameAxis.x != 0 || currentFrameAxis.y != 0))
+        if( currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y || repeatMovement == true)
         {
             if (currentFrameAxis.x > 0) MoveHoriz(1);
             else if (currentFrameAxis.x < 0) MoveHoriz(-1);
@@ -20,6 +23,9 @@ public class Player : _Creature
             else if (currentFrameAxis.y < 0) MoveVert(-1);
         }
 
-        //previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
+        previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
+
     }
+
+
 }

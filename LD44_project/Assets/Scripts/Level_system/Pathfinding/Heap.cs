@@ -8,7 +8,7 @@ public class Heap<T> where T : IHeapItem<T>
     T[] items;
     int currentItemCount;
 
-    public int Count { get => currentItemCount; }
+    public int Count => currentItemCount;
 
     public Heap(int maxHeapSize)
     {

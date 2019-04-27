@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Agent : _Entity
+public abstract class _Agent : _Creature
 {
     
 }

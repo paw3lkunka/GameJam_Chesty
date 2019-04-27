@@ -7,11 +7,11 @@ using static _OurLib;
 
 public class PathFinder : MonoBehaviour
 {
-    private Agent agent;
+    private _Agent agent;
 
     private void Start()
     {
-        agent = GetComponent<Agent>();
+        agent = GetComponent<_Agent>();
     }
 
     public void FindPath(_GridElement target)               // changes value of lastHops dictionary in tile, looks like last-hop table for specific agents
