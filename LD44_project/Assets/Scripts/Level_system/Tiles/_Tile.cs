@@ -10,3 +10,4 @@ public abstract class _Tile : _GridElement
     public abstract bool Walkable { get; }
 
 }
+

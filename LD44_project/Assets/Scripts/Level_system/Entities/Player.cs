@@ -45,6 +45,13 @@ public class Player : _Creature
             coinsAutoCollect.state = true;
     }
 
+    protected override void EndMovement()
+    {
+        base.EndMovement();
+        animator.SetBool("isMoving", false);
+        Player.repeatMovement = true;
+    }
+
     protected override void Translate(int x, int y)
     {
         StartMovement(X + x, Y + y);
@@ -56,7 +63,8 @@ public class Player : _Creature
 
     public override bool DealWithKnight()
     {
-        SubMoney(((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).agent as Knight).AttackPoints);
+        //SubMoney(((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).agent as Knight).AttackPoints);
+        SubMoney((CurrentTilePlus<Floor>(movementVector.x, movementVector.y).agent as Knight).AttackPoints);
         return false;
     }
 
@@ -78,4 +86,5 @@ public class Player : _Creature
         (_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Door).Open(this);
         return true;
     }
+
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class _Agent : _Creature
+public abstract class _Agent : _Creature//, IWallet
 {
     [SerializeField]
     protected List<_GridElement> targets;
@@ -17,13 +17,24 @@ public abstract class _Agent : _Creature
     protected uint attack;
 
     public uint AttackPoints => attack;
-
+    
     protected List<PathFind.Point> path;
     private int pathProgress = 0;
 
     protected new void Update()
     {
         base.Update();
+    }
+    protected override void StartMovement(float endPosX, float endPosY)
+    {
+        CurrentTile.agent = null;
+        base.StartMovement(endPosX, endPosY);
+    }
+
+    protected override void EndMovement()
+    {
+        CurrentTile.agent = this;
+        base.EndMovement();
     }
 
     public void StepForwards()
@@ -82,4 +93,8 @@ public abstract class _Agent : _Creature
 
         return targets[minDistanceIndex];
     }
+    /*
+    public abstract uint Coins { get; set; }
+    public abstract void AddCoins();
+    public abstract void SubCoins();*/
 }

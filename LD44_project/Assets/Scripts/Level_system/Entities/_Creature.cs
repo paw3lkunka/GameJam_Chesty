@@ -46,7 +46,7 @@ public abstract class _Creature : _Entity
 
     protected Vector2Int movementVector;
 
-    private Animator animator;
+    protected Animator animator;
 
     private void Start()
     {
@@ -127,7 +127,7 @@ public abstract class _Creature : _Entity
     public abstract bool DealWithMonster();
     public abstract bool DealWithDoor();
 
-    protected void StartMovement(float endPosX, float endPosY)
+    protected virtual void StartMovement(float endPosX, float endPosY)
     {
         Debug.Log("Start movement " + endPosX + " " + endPosY);
         startPos = transform.position;
@@ -137,6 +137,11 @@ public abstract class _Creature : _Entity
         if(this is Player)animator.SetBool("isMoving", true);
     }
 
+    protected virtual void EndMovement()
+    {
+        isMoving = false;
+    }
+
     protected void Update()
     {
         if (isMoving)
@@ -144,10 +149,7 @@ public abstract class _Creature : _Entity
             transform.position = Vector2.Lerp(startPos, endPos, movementCurve.Evaluate(Time.time - startTime) * movementSpeed);
             if ((Vector2)transform.position == endPos)
             {
-                isMoving = false;
-                if(this is Player) animator.SetBool("isMoving", false);
-                if (this is Player)
-                    Player.repeatMovement = true;
+                EndMovement();
             }
         }
     }
