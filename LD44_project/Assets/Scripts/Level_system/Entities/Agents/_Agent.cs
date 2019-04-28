@@ -1,47 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 public abstract class _Agent : _Creature
 {
     [SerializeField]
-    protected Floor target;
-
-    [SerializeField]
-    protected readonly int baseHealth;
-    [SerializeField]
-    protected int health;
-    [SerializeField]
-    protected uint attack;
-
-    public uint AttackPoints => attack;
-
-
+    protected List<_GridElement> targets;
+    protected _GridElement currentTarget;
 
     protected new void Update()
     {
         base.Update();
     }
 
-    public void Attack( _Agent opponent)
+    protected float GetDistance(_GridElement element)
     {
-        opponent.health -= (int)attack / 2 + (int)attack * (baseHealth / 200);
-        if (opponent.health < 0)
-            Destroy(opponent.gameObject);
-
+        return Mathf.Pow(this.X - element.X, 2) + Mathf.Pow(this.Y - element.Y, 2);
     }
 
-    public void Fight( _Agent opponent)
+    protected _GridElement GetCurrentTarget()
     {
-        try
-        {
-            while(true)
-            {
-                Attack(opponent);
-                opponent.Attack(this);
-            }
-        }
-        catch( NullReferenceException) { }
+        int minDistanceIndex = 0;
+
+        for (int i = 1; i < targets.Count; i++)
+            if (GetDistance(targets[minDistanceIndex]) > GetDistance(targets[i]))
+                minDistanceIndex = i;
+
+        return targets[minDistanceIndex];
     }
 }
