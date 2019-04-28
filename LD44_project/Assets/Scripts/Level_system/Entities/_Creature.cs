@@ -8,7 +8,7 @@ public abstract class _Creature : _Entity
 {
     #region Money
     [SerializeField]
-    protected uint money = 20;
+    public uint money = 1;
     public virtual void DropCoins(uint amount)
     {
         if ( amount <= money)

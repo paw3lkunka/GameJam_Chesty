@@ -92,9 +92,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4f95a8312c0d474e8c6acf927b65e84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gCost: 0
-  hCost: 0
+  discovered: 0
   doorClosed: {fileID: 21300000, guid: dd317433f4da2a041a2764c1753c33aa, type: 3}
   doorOpen: {fileID: 21300000, guid: 597e8c6921766d949962721f3bad8600, type: 3}
   doorDestroyed: {fileID: 21300000, guid: 8eb9907a8cfbab24f903c30d90329eee, type: 3}
-  doorHitDurability: 3
+  crackDecals:
+  - {fileID: 21300000, guid: 381cb0df6397bfd469ef0445333113d9, type: 3}
+  doorHitDurability: 1
+  isOpen: 0

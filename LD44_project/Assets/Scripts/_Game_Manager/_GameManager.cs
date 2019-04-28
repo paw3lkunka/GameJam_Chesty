@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Game manager main class. Should not be attached manually as an component as it is instatniated automatically by Loader script.
@@ -22,5 +23,13 @@ public class _GameManager : MonoBehaviour
 
         // Prevent the game manager from being destroyed while loading scenes
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 }
