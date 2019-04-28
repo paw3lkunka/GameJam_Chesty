@@ -148,6 +148,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  isMoving: 0
 --- !u!95 &141756545365985647
 Animator:
   serializedVersion: 3
@@ -158,7 +159,7 @@ Animator:
   m_GameObject: {fileID: 141756545839302411}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7ce5726d0c5ce1a4bb63c7c91df0c511, type: 2}
+  m_Controller: {fileID: 9100000, guid: 540976b2ae37b3544a62bc695a1ddd72, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

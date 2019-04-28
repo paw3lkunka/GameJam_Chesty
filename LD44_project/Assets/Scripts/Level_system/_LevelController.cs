@@ -10,6 +10,7 @@ public class _LevelController : MonoBehaviour
 {
     public static _LevelController instance = null;
 
+    public static Animator mainAnimator;
     public Player player;
     public List<Monster> monsters;
     public List<Knight> knights;
@@ -51,6 +52,9 @@ public class _LevelController : MonoBehaviour
         ForceMovement += (int a, int b) => Debug.Log("Event aaaaa");
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
+        mainAnimator = player.GetComponent<Animator>();
+        mainAnimator.SetInteger("moveX", 0);
+        mainAnimator.SetInteger("moveY", 0);
         StartTimer();
 
         // Generating current level bounds dynamically **********************
@@ -140,7 +144,7 @@ public class _LevelController : MonoBehaviour
     {
         currentFrameAxis.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        if ( AreMovementKeysDownThisFrame() && (Player.repeatMovement == true))
+        if ( WereMovementKeysJustPressed() && !_LevelController.instance.player.isMoving)
         {
             (int h, int v) arg = (0, 0);
             StopTimer();
@@ -163,7 +167,7 @@ public class _LevelController : MonoBehaviour
 
     private bool WereMovementKeysJustPressed()
     {
-        return (currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y) && (currentFrameAxis.x > 0 || currentFrameAxis.y > 0);
+        return (currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y) && (currentFrameAxis.x != 0 || currentFrameAxis.y != 0);
     }
 
     private bool AreMovementKeysUpThisFrame()

@@ -10,15 +10,15 @@ public class Monster : _Agent
     private void Start()
     {
         // create a grid
-        PathFind.Grid grid = new PathFind.Grid(_LevelController.instance.monstersTilemap.GetLength(0), _LevelController.instance.monstersTilemap.GetLength(1), _LevelController.instance.monstersTilemap);
+        //PathFind.Grid grid = new PathFind.Grid(_LevelController.instance.monstersTilemap.GetLength(0), _LevelController.instance.monstersTilemap.GetLength(1), _LevelController.instance.monstersTilemap);
 
-        // create source and target points
-        PathFind.Point _from = new PathFind.Point((int)transform.position.x, (int)transform.position.y);
-        PathFind.Point _to = new PathFind.Point((int)currentTarget.transform.position.x, (int)currentTarget.transform.position.y);
+        //// create source and target points
+        //PathFind.Point _from = new PathFind.Point((int)transform.position.x, (int)transform.position.y);
+        //PathFind.Point _to = new PathFind.Point((int)currentTarget.transform.position.x, (int)currentTarget.transform.position.y);
 
-        // get path
-        // path will either be a list of Points (x, y), or an empty list if no path is found.
-        path = PathFind.Pathfinding.FindPath(grid, _from, _to);
+        //// get path
+        //// path will either be a list of Points (x, y), or an empty list if no path is found.
+        //path = PathFind.Pathfinding.FindPath(grid, _from, _to);
 
         _LevelController.instance.ForceMovement += StepForwards;
     }

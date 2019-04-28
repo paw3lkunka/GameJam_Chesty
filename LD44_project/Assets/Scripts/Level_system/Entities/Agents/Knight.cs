@@ -10,68 +10,70 @@ public class Knight : _Agent
     [SerializeField]
     private float sightRange = 10f;
 #pragma warning restore
-    [SerializeField] private int greed = 5;
-    [SerializeField] private int honour = 5;
-    [SerializeField] private int fear = 5;
+    [SerializeField] private int greed = 1;
+    [SerializeField] private int honour = 1;
+    [SerializeField] private int fear = 1;
 
     private float distanceToPlayer = 0f;
-    private float distanceToMonster = 0f;
+    private (float, Monster) distanceToMonster;
     private float distanceToCoin = 0f;
 
-    private List<float> monsterDistances;
-    private List<float> playerDistances;
+    private List<(float, Monster)> monsterDistances;
 
     private enum KnightStates { DoingNothing, LookingAround, ChasingPlayer, FleeingMonster, GettingCoin }
-    KnightStates knightStates = KnightStates.DoingNothing;
+    [SerializeField]
+    private KnightStates knightState = KnightStates.DoingNothing;
+    private KnightStates lastKnightState = KnightStates.DoingNothing;
 
-    private void Start()
+    private new void Start()
     {
-        monsterDistances = new List<float>();
-        playerDistances = new List<float>();
+        base.Start();
+        monsterDistances = new List<(float, Monster)>();
         // create a grid
-        Debug.Log("Level controller instance: " + _LevelController.instance == null);
-        PathFind.Grid grid = new PathFind.Grid(_LevelController.instance.knightsTilemap.GetLength(0), _LevelController.instance.knightsTilemap.GetLength(1), _LevelController.instance.knightsTilemap);
-
-        // create source and target points
-        PathFind.Point _from = new PathFind.Point((int)transform.position.x, (int)transform.position.y);
-        PathFind.Point _to = new PathFind.Point((int)targets[0].transform.position.x, (int)targets[0].transform.position.y);
-
-        // get path
-        // path will either be a list of Points (x, y), or an empty list if no path is found.
-        path = PathFind.Pathfinding.FindPath(grid, _from, _to);
-        foreach(PathFind.Point point in path)
-        {
-            Debug.Log(point.x + " " + point.y);
-        }
-
+        
+        _LevelController.instance.ForceMovement += KnightAI;
         _LevelController.instance.ForceMovement += StepForwards;
     }
 
     private new void Update()
     {
+        Debug.Log("Dist. to player: " + distanceToPlayer + " Dist. to monster: " + distanceToMonster.Item1);
         base.Update();
     }
 
-    private void KnightAI()
+    private void KnightAI(int a, int b)
     {
-        switch(knightStates)
+        Decision();
+        if(!lastKnightState.Equals(knightState))
         {
-            case KnightStates.DoingNothing:
+            _from.Set(X, Y);
+            switch (knightState)
+            {
+                case KnightStates.DoingNothing:
+                    _to.Set(X, Y);
+                    break;
+                case KnightStates.LookingAround:
+                    RandomTileTarget();
+                    break;
+                case KnightStates.ChasingPlayer:
+                    _to.Set(_LevelController.instance.player.X, _LevelController.instance.player.Y);
+                    break;
+                case KnightStates.FleeingMonster:
+                    _to.Set(_LevelController.instance.player.X, _LevelController.instance.player.Y);
+                    break;
+                case KnightStates.GettingCoin:
+                    _to.Set(X, Y);
+                    break;
+            }
 
-                break;
-            case KnightStates.LookingAround:
-
-                break;
-            case KnightStates.ChasingPlayer:
-
-                break;
-            case KnightStates.FleeingMonster:
-
-                break;
-            case KnightStates.GettingCoin:
-
-                break;
+            path = PathFind.Pathfinding.FindPath(grid, _from, _to);
+            ExtrapolatePath(path);
         }
+
+        int e = (int)knightState;
+        lastKnightState = (KnightStates)e;
+        //if (_from == _to && knightState == KnightStates.LookingAround) RandomTileTarget(); 
+
     }
 
     private void Decision()
@@ -87,25 +89,55 @@ public class Knight : _Agent
         monsterDistances.Clear();
         foreach (Monster element in _LevelController.instance.monsters)
         {
-            //monsterDistances.Add()
+            monsterDistances.Add((CalculateDistanceSqr(transform.position, element.transform.position), element));
+        }
+
+        distanceToMonster.Item1 = 0f;
+        distanceToMonster.Item2 = null;
+        monsterDistances.Sort(CompareMonsters);
+        for (int i = 0; i < monsterDistances.Count; i++)
+        {
+            RaycastHit2D linecastMonster = Physics2D.Linecast(transform.position, monsterDistances[i].Item2.transform.position);
+            if (linecastMonster.transform.tag == "Monster")
+            {
+                distanceToMonster = monsterDistances[i];
+                break;
+            }
+        }
+        
+        // Check for coin
+        // to implement
+
+        if(distanceToPlayer == 0 && distanceToMonster.Item1 == 0)
+        {
+            knightState = KnightStates.LookingAround;
+        }
+        else if(distanceToPlayer == 0 && distanceToMonster.Item1 > 0)
+        {
+            knightState = KnightStates.FleeingMonster;
+        }
+        else if(distanceToMonster.Item1 == 0 && distanceToPlayer > 0)
+        {
+            knightState = KnightStates.ChasingPlayer;
+        }
+        if(distanceToPlayer * honour < distanceToMonster.Item1 / fear)
+        {
+            knightState = KnightStates.ChasingPlayer;
+        }
+        else
+        {
+            knightState = KnightStates.LookingAround;
         }
     }
 
-    //private float CalculateDistance()
-
-    private void CheckForPlayer()
+    private static int CompareMonsters( (float, Monster) monsterA, (float, Monster) monsterB )
     {
-
+        return (int)(monsterB.Item1 - monsterA.Item1);
     }
 
-    private void CheckForMonster()
+    private float CalculateDistanceSqr(Vector2 from, Vector2 to)
     {
-
-    }
-
-    private void CheckForCoin()
-    {
-
+        return (to.x - from.x) * (to.x - from.x) + (to.y - from.y) * (to.y - from.y);
     }
 
     protected override void Translate(int x, int y)
@@ -116,6 +148,7 @@ public class Knight : _Agent
     private void Die()
     {
         _LevelController.instance.ForceMovement -= StepForwards;
+        _LevelController.instance.ForceMovement -= KnightAI;
         _LevelController.instance.knights.Remove(this);
         Destroy(gameObject);
     }

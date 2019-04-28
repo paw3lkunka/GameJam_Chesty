@@ -48,7 +48,6 @@ public class Player : _Creature
     protected override void EndMovement()
     {
         base.EndMovement();
-        animator.SetBool("isMoving", false);
         Player.repeatMovement = true;
     }
 

@@ -6,7 +6,6 @@ using UnityEngine;
 public abstract class _Agent : _Creature//, IWallet
 {
     [SerializeField]
-    protected List<_GridElement> targets;
     protected _GridElement currentTarget;
 
     [SerializeField]
@@ -16,10 +15,24 @@ public abstract class _Agent : _Creature//, IWallet
     [SerializeField]
     protected uint attack;
 
+    protected PathFind.Point _to;
+    protected PathFind.Point _from;
+    protected PathFind.Grid grid;
+
     public uint AttackPoints => attack;
     
     protected List<PathFind.Point> path;
     private int pathProgress = 0;
+
+    protected void Start()
+    {
+        path = new List<PathFind.Point>();
+        _to = new PathFind.Point(X, Y);
+        _from = new PathFind.Point(X, Y);
+        grid = new PathFind.Grid(_LevelController.instance.knightsTilemap.GetLength(0), _LevelController.instance.knightsTilemap.GetLength(1), _LevelController.instance.knightsTilemap);
+        path = PathFind.Pathfinding.FindPath(grid, _from, _to);
+        ExtrapolatePath(path);
+    }
 
     protected new void Update()
     {
@@ -37,11 +50,54 @@ public abstract class _Agent : _Creature//, IWallet
         base.EndMovement();
     }
 
+    protected void RandomTileTarget()
+    {
+        _from.Set(X, Y);
+        while (true)
+        {
+            _Tile[,] tempTiles = _LevelController.instance.tiles;
+            _Tile targetTile = tempTiles[UnityEngine.Random.Range(0, tempTiles.GetLength(0)), UnityEngine.Random.Range(0, tempTiles.GetLength(1))];
+            if (targetTile is Floor)
+            {
+                _to.Set(targetTile.X, targetTile.Y);
+                path = PathFind.Pathfinding.FindPath(grid, _from, _to);
+                if (path.Count != 0)
+                {
+                    ExtrapolatePath(path);
+                    break;
+                }
+            }
+        }
+    }
+
+    protected void ExtrapolatePath(List<PathFind.Point> path)
+    {
+        for (int i = 1; i < path.Count; i++)
+        {
+            if (path[i].x != path[i - 1].x && path[i].y != path[i - 1].y)
+            {
+                if (_LevelController.instance.tiles[path[i].x, path[i - 1].y] is Floor)
+                    path.Insert(i, new PathFind.Point(path[i].x, path[i - 1].y));
+                else
+                    path.Insert(i, new PathFind.Point(path[i - 1].x, path[i].y));
+
+            }
+        }
+    }
+
     public void StepForwards(int a, int b)
     {
         Debug.Log("Called step forwards");
-        MoveTowards(path[pathProgress]);
-        if(pathProgress < path.Count - 1) pathProgress++;
+        if(path != null)
+        {
+            MoveTowards(path[pathProgress]);
+            if (pathProgress < path.Count - 1) pathProgress++;
+            else
+            {
+                pathProgress = 0;
+                RandomTileTarget();
+            }
+        }
     }
 
     public void MoveTowards(PathFind.Point point)
@@ -49,7 +105,6 @@ public abstract class _Agent : _Creature//, IWallet
         Debug.Log("Called move towards");
         int x = point.x - (int)transform.position.x;
         int y = point.y - (int)transform.position.y;
-        //Translate(x, y);
         Move(x, y);
     }
 
@@ -84,16 +139,6 @@ public abstract class _Agent : _Creature//, IWallet
         return Mathf.Pow(this.X - element.X, 2) + Mathf.Pow(this.Y - element.Y, 2);
     }
 
-    protected _GridElement GetCurrentTarget()
-    {
-        int minDistanceIndex = 0;
-
-        for (int i = 1; i < targets.Count; i++)
-            if (GetDistance(targets[minDistanceIndex]) > GetDistance(targets[i]))
-                minDistanceIndex = i;
-
-        return targets[minDistanceIndex];
-    }
     /*
     public abstract uint Coins { get; set; }
     public abstract void AddCoins();

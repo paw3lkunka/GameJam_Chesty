@@ -15,7 +15,7 @@ public abstract class _Creature : _Entity
         {
             (_LevelController.instance.tiles[X, Y] as Floor).coins += amount;
             money -= amount;
-
+            if (this is Player) _LevelController.mainAnimator.SetTrigger("coinLoss");
         }
     }
 
@@ -26,6 +26,7 @@ public abstract class _Creature : _Entity
             ref uint tileCoins = ref (_LevelController.instance.tiles[X, Y] as Floor).coins;
             money += tileCoins;
             tileCoins = 0;
+            if (this is Player && CurrentTile.coins != 0) _LevelController.mainAnimator.SetTrigger("coinGain");
         }
         catch (NullReferenceException) { }
     }
@@ -38,7 +39,7 @@ public abstract class _Creature : _Entity
     private AnimationCurve movementCurve;
 #pragma warning restore
 
-    private bool isMoving = false;
+    public bool isMoving = false;
     private float startTime;
     
     private Vector2 startPos;
@@ -79,10 +80,15 @@ public abstract class _Creature : _Entity
     /// <param name="y">Up = 1; Right = -1</param>
     protected void Move(int x, int y)
     {
-        if (x > 1 || x < -1 || y > 1 || y < -1)
-            throw new ArgumentOutOfRangeException(String.Format("Can only move by 1 tile at a time! (Tried moving {0} tiles horizontal and {1} tiles vertical)", x, y));
+        //if (x > 1 || x < -1 || y > 1 || y < -1)
+        //    throw new ArgumentOutOfRangeException(String.Format("Can only move by 1 tile at a time! (Tried moving {0} tiles horizontal and {1} tiles vertical)", x, y));
 
         movementVector.Set(x, y);
+        if (this is Player)
+        {
+            animator.SetInteger("moveX", x);
+            animator.SetInteger("moveY", y);
+        }
         // Get the target tile reference
         _Tile targetTile = _LevelController.instance.tiles[X + x, Y + y];
 
@@ -129,17 +135,21 @@ public abstract class _Creature : _Entity
 
     protected virtual void StartMovement(float endPosX, float endPosY)
     {
-        Debug.Log("Start movement " + endPosX + " " + endPosY);
-        startPos = transform.position;
-        endPos.Set(endPosX, endPosY);
-        startTime = Time.time;
-        isMoving = true;
-        if(this is Player)animator.SetBool("isMoving", true);
+        if(!isMoving)
+        {
+            startPos = transform.position;
+            endPos.Set(endPosX, endPosY);
+            startTime = Time.time;
+            isMoving = true;
+            
+        }
     }
 
     protected virtual void EndMovement()
     {
         isMoving = false;
+        _LevelController.mainAnimator.SetInteger("moveX", 0);
+        _LevelController.mainAnimator.SetInteger("moveY", 0);
     }
 
     protected void Update()
