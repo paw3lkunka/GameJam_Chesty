@@ -38,8 +38,6 @@ public abstract class _Creature : _Entity
     private AnimationCurve movementCurve;
 #pragma warning restore
 
-    public static bool repeatMovement = true;
-
     private bool isMoving = false;
     private float startTime;
     
@@ -107,7 +105,11 @@ public abstract class _Creature : _Entity
             }
             // Make decision if creature should move
             if(monsterOutcome && knightOutcome && trapOutcome)
+            {
                 Translate(x, y);
+                if(this is Player) Player.repeatMovement = false;
+            }
+            
         }
         else if(targetTile is Door)
         {
@@ -127,12 +129,12 @@ public abstract class _Creature : _Entity
 
     protected void StartMovement(float endPosX, float endPosY)
     {
+        Debug.Log("Start movement " + endPosX + " " + endPosY);
         startPos = transform.position;
         endPos.Set(endPosX, endPosY);
         startTime = Time.time;
-        repeatMovement = false;
         isMoving = true;
-        animator.SetBool("isMoving", true);
+        if(this is Player)animator.SetBool("isMoving", true);
     }
 
     protected void Update()
@@ -142,9 +144,10 @@ public abstract class _Creature : _Entity
             transform.position = Vector2.Lerp(startPos, endPos, movementCurve.Evaluate(Time.time - startTime) * movementSpeed);
             if ((Vector2)transform.position == endPos)
             {
-                repeatMovement = true;
                 isMoving = false;
-                animator.SetBool("isMoving", false);
+                if(this is Player) animator.SetBool("isMoving", false);
+                if (this is Player)
+                    Player.repeatMovement = true;
             }
         }
     }

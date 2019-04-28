@@ -17,6 +17,7 @@ public class _LevelController : MonoBehaviour
     private float turnTime = 5f;
     private float elapsedTime = 0f;
     public event Action<int, int> ForceMovement;
+    public event Action MoveAgents;
 
     // Bool tilemaps for storing the pass-through block information
     public bool[,] knightsTilemap;
@@ -46,57 +47,7 @@ public class _LevelController : MonoBehaviour
         // ==========================
 
         ForceMovement += (int a,int b) => Debug.Log("Event aaaaa");
-    }
 
-    public void Update()
-    {
-        currentFrameAxis.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
-        if ( (currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y) && (_Creature.repeatMovement == true) && (currentFrameAxis.x != 0 || currentFrameAxis.y != 0))
-        {
-            (int h, int v) arg = (0, 0);
-            StopTimer();
-                 if (currentFrameAxis.x > 0) arg = (1, 0);  //player.MoveHoriz(1);
-            else if (currentFrameAxis.x < 0) arg = (-1, 0); //player.MoveHoriz(-1);
-            else if (currentFrameAxis.y > 0) arg = (0, 1);  //player.MoveVert(1);
-            else if (currentFrameAxis.y < 0) arg = (0, -1); //player.MoveVert(-1);
-            ForceMovement(arg.h, arg.v);
-            StartTimer();
-        }
-
-        previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
-
-    }
-
-    private void StartTimer()
-    {
-        if (timerCoroutine == null)
-        {
-            timerCoroutine = GlobalTimer();
-            StartCoroutine(timerCoroutine);
-        }
-    }
-
-    private void StopTimer()
-    {
-        if(timerCoroutine != null)
-        {
-            StopCoroutine(timerCoroutine);
-            timerCoroutine = null;
-        }
-    }
-
-    private IEnumerator GlobalTimer()
-    {
-        while(true)
-        {
-            yield return new WaitForSeconds(turnTime);
-            ForceMovement(0, 0);
-        }
-    }
-
-    private void Start()
-    {
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         StartTimer();
 
@@ -116,7 +67,7 @@ public class _LevelController : MonoBehaviour
         // Filling the tiles array *****************************************
         foreach (_Tile tile in FindObjectsOfType<_Tile>())
         {
-            if ( tiles[tile.X, tile.Y] == null)
+            if (tiles[tile.X, tile.Y] == null)
                 tiles[tile.X, tile.Y] = tile;
             else
                 throw new DuplicatedTile(tiles[tile.X, tile.Y], tile);
@@ -129,7 +80,7 @@ public class _LevelController : MonoBehaviour
             _Tile tile = tiles[obj.X, obj.Y];
             try
             {
-                if (obj is _Agent && tile is Floor )
+                if (obj is _Agent && tile is Floor)
                     (tile as Floor).agent = obj as _Agent;
 
                 else if (obj is Thing && tile is Floor)
@@ -169,6 +120,91 @@ public class _LevelController : MonoBehaviour
             }
         }
     }
+
+    public void Update()
+    {
+        currentFrameAxis.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
+        if ( AreMovementKeysDownThisFrame() && (Player.repeatMovement == true))
+        {
+            (int h, int v) arg = (0, 0);
+            StopTimer();
+                 if (currentFrameAxis.x > 0) arg = (1, 0);  //player.MoveHoriz(1);
+            else if (currentFrameAxis.x < 0) arg = (-1, 0); //player.MoveHoriz(-1);
+            else if (currentFrameAxis.y > 0) arg = (0, 1);  //player.MoveVert(1);
+            else if (currentFrameAxis.y < 0) arg = (0, -1); //player.MoveVert(-1);
+            ForceMovement(arg.h, arg.v);
+            MoveAgents();
+            StartTimer();
+        }
+
+        previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
+
+    }
+
+    public void UpdateTiles()
+    {
+        //foreach (_Entity obj in FindObjectsOfType<_Entity>())
+        //{
+        //    _Tile tile = tiles[obj.X, obj.Y];
+        //    try
+        //    {
+        //        if (obj is _Agent && tile is Floor)
+        //            (tile as Floor).agent = obj as _Agent;
+
+        //        else if (obj is Thing && tile is Floor)
+        //            (tile as Floor).thing = obj as Thing;
+        //    }
+        //    catch (NullReferenceException)
+        //    {
+        //        throw new InvalidGridObjectPosition(obj);
+        //    }
+        //}
+    }
+
+    private bool AreMovementKeysDownThisFrame()
+    {
+        return (currentFrameAxis.x != 0 || currentFrameAxis.y != 0);
+    }
+
+    private bool WereMovementKeysJustPressed()
+    {
+        return (currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y) && (currentFrameAxis.x > 0 || currentFrameAxis.y > 0);
+    }
+
+    private bool AreMovementKeysUpThisFrame()
+    {
+        return (currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y) && (currentFrameAxis.x == 0 || currentFrameAxis.y == 0);
+    }
+
+    private void StartTimer()
+    {
+        if (timerCoroutine == null)
+        {
+            timerCoroutine = GlobalTimer();
+            StartCoroutine(timerCoroutine);
+        }
+    }
+
+    private void StopTimer()
+    {
+        if(timerCoroutine != null)
+        {
+            StopCoroutine(timerCoroutine);
+            timerCoroutine = null;
+        }
+    }
+
+    private IEnumerator GlobalTimer()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(turnTime);
+            ForceMovement(0, 0);
+            MoveAgents();
+        }
+    }
+
 }
 public class DuplicatedTile : Exception
 {

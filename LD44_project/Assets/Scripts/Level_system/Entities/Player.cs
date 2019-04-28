@@ -9,6 +9,8 @@ public class Player : _Creature
     [SerializeField]
     private (bool state, int x, int y) coinsAutoCollect;
 
+    public static bool repeatMovement = true;
+
     public event Action LostEvent;
     public event Action OnTileEnterPlayer;
 
@@ -36,7 +38,7 @@ public class Player : _Creature
     private new void Update()
     {
         base.Update();
-
+        
         if (coinsAutoCollect.state)
             CollectCoins();
         if (coinsAutoCollect.x != X || coinsAutoCollect.y != Y)
