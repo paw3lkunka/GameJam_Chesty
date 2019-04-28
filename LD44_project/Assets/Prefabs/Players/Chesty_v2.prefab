@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 141756545365985647}
   m_Layer: 0
   m_Name: Chesty_v2
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -68,8 +68,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -2142359239
-  m_SortingLayer: 3
+  m_SortingLayerID: 1678289163
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f7076596d8247574681a8239b62feea3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -110,7 +110,7 @@ MonoBehaviour:
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 0.17084247
-      value: 0.038855672
+      value: 0.0008918047
       inSlope: 0.035858084
       outSlope: 0.035858084
       tangentMode: 0
@@ -148,7 +148,7 @@ Animator:
   m_GameObject: {fileID: 141756545839302411}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6bf696f438998f24fa6a435c4e8c8044, type: 2}
+  m_Controller: {fileID: 9100000, guid: 7ce5726d0c5ce1a4bb63c7c91df0c511, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -238,11 +238,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_BackGroundColor.b
       value: 0.2264151
-      objectReference: {fileID: 0}
-    - target: {fileID: 7400983768475350939, guid: 032266efdac8e3d4094bae0ffccb3efc,
-        type: 3}
-      propertyPath: orthographic size
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 032266efdac8e3d4094bae0ffccb3efc, type: 3}

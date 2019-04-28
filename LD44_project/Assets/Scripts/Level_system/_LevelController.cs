@@ -52,7 +52,7 @@ public class _LevelController : MonoBehaviour
     {
         currentFrameAxis.Set(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
-        if ( (currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y || _Creature.repeatMovement == true) && (currentFrameAxis.x != 0 || currentFrameAxis.y != 0))
+        if ( (currentFrameAxis.x != previousFrameAxis.x || currentFrameAxis.y != previousFrameAxis.y) && (_Creature.repeatMovement == true) && (currentFrameAxis.x != 0 || currentFrameAxis.y != 0))
         {
             (int h, int v) arg = (0, 0);
             StopTimer();
@@ -60,13 +60,11 @@ public class _LevelController : MonoBehaviour
             else if (currentFrameAxis.x < 0) arg = (-1, 0); //player.MoveHoriz(-1);
             else if (currentFrameAxis.y > 0) arg = (0, 1);  //player.MoveVert(1);
             else if (currentFrameAxis.y < 0) arg = (0, -1); //player.MoveVert(-1);
-            Debug.Log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             ForceMovement(arg.h, arg.v);
             StartTimer();
         }
 
         previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
-
 
     }
 

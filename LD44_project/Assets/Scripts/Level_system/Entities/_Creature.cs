@@ -48,8 +48,11 @@ public abstract class _Creature : _Entity
 
     protected Vector2Int movementVector;
 
+    private Animator animator;
+
     private void Start()
     {
+        animator = GetComponent<Animator>();
         endPos = new Vector2();
         startPos = new Vector2();
         movementVector = new Vector2Int();
@@ -129,6 +132,7 @@ public abstract class _Creature : _Entity
         startTime = Time.time;
         repeatMovement = false;
         isMoving = true;
+        animator.SetBool("isMoving", true);
     }
 
     protected void Update()
@@ -140,6 +144,7 @@ public abstract class _Creature : _Entity
             {
                 repeatMovement = true;
                 isMoving = false;
+                animator.SetBool("isMoving", false);
             }
         }
     }

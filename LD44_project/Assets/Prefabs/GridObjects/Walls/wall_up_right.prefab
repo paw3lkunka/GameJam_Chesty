@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 8897150513047804659, guid: 6915a02305462024f8fd1b7640f0b51e,
         type: 3}
       propertyPath: m_Name
-      value: wall_horizontal
+      value: wall_up_right
       objectReference: {fileID: 0}
     - target: {fileID: 8398235445924969189, guid: 6915a02305462024f8fd1b7640f0b51e,
         type: 3}
@@ -67,5 +67,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6738497113977641901, guid: 6915a02305462024f8fd1b7640f0b51e,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8dd0b0c9bdb056c419a30fda394bfc92,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6915a02305462024f8fd1b7640f0b51e, type: 3}
