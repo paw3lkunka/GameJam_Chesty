@@ -37,7 +37,7 @@ public abstract class _Agent : _Creature//, IWallet
         base.EndMovement();
     }
 
-    public void StepForwards()
+    public void StepForwards(int a, int b)
     {
         Debug.Log("Called step forwards");
         MoveTowards(path[pathProgress]);
@@ -49,7 +49,8 @@ public abstract class _Agent : _Creature//, IWallet
         Debug.Log("Called move towards");
         int x = point.x - (int)transform.position.x;
         int y = point.y - (int)transform.position.y;
-        Translate(x, y);
+        //Translate(x, y);
+        Move(x, y);
     }
 
     private bool CheckTile(int x, int y)

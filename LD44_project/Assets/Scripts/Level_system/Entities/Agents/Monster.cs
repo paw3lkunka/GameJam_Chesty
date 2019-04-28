@@ -20,7 +20,7 @@ public class Monster : _Agent
         // path will either be a list of Points (x, y), or an empty list if no path is found.
         path = PathFind.Pathfinding.FindPath(grid, _from, _to);
 
-        _LevelController.instance.MoveAgents += StepForwards;
+        _LevelController.instance.ForceMovement += StepForwards;
     }
 
     private new void Update()
@@ -40,6 +40,13 @@ public class Monster : _Agent
             //}
         }
 
+    }
+
+    private void Die()
+    {
+        _LevelController.instance.ForceMovement -= StepForwards;
+        _LevelController.instance.monsters.Remove(this);
+        Destroy(gameObject);
     }
 
     protected override void Translate(int x, int y)

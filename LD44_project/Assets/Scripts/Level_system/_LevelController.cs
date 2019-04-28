@@ -11,19 +11,21 @@ public class _LevelController : MonoBehaviour
     public static _LevelController instance = null;
 
     public Player player;
+    public List<Monster> monsters;
+    public List<Knight> knights;
     public _Tile[,] tiles;
 
     [SerializeField]
     private float turnTime = 5f;
     private float elapsedTime = 0f;
     public event Action<int, int> ForceMovement;
-    public event Action MoveAgents;
 
     // Bool tilemaps for storing the pass-through block information
     public bool[,] knightsTilemap;
     public bool[,] monstersTilemap;
     // Temporarily hidden - as it should be generated in the respectful entities
     // public static PathFind.Grid grid;
+
 
     private IEnumerator timerCoroutine;
 
@@ -46,7 +48,7 @@ public class _LevelController : MonoBehaviour
         }
         // ==========================
 
-        ForceMovement += (int a,int b) => Debug.Log("Event aaaaa");
+        ForceMovement += (int a, int b) => Debug.Log("Event aaaaa");
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         StartTimer();
@@ -81,7 +83,18 @@ public class _LevelController : MonoBehaviour
             try
             {
                 if (obj is _Agent && tile is Floor)
+                {
                     (tile as Floor).agent = obj as _Agent;
+
+                    if (obj is Knight)
+                    {
+                        knights.Add(obj as Knight);
+                    }
+                    else if (obj is Monster)
+                    {
+                        monsters.Add(obj as Monster);
+                    }
+                }
 
                 else if (obj is Thing && tile is Floor)
                     (tile as Floor).thing = obj as Thing;
@@ -92,6 +105,8 @@ public class _LevelController : MonoBehaviour
             }
         }
         // ********************************************************************
+
+
 
         // Creating knights and monsters arrays
         knightsTilemap = new bool[maxX + 1, maxY + 1];
@@ -134,32 +149,11 @@ public class _LevelController : MonoBehaviour
             else if (currentFrameAxis.y > 0) arg = (0, 1);  //player.MoveVert(1);
             else if (currentFrameAxis.y < 0) arg = (0, -1); //player.MoveVert(-1);
             ForceMovement(arg.h, arg.v);
-            MoveAgents();
             StartTimer();
         }
 
         previousFrameAxis.Set(currentFrameAxis.x, currentFrameAxis.y);
 
-    }
-
-    public void UpdateTiles()
-    {
-        //foreach (_Entity obj in FindObjectsOfType<_Entity>())
-        //{
-        //    _Tile tile = tiles[obj.X, obj.Y];
-        //    try
-        //    {
-        //        if (obj is _Agent && tile is Floor)
-        //            (tile as Floor).agent = obj as _Agent;
-
-        //        else if (obj is Thing && tile is Floor)
-        //            (tile as Floor).thing = obj as Thing;
-        //    }
-        //    catch (NullReferenceException)
-        //    {
-        //        throw new InvalidGridObjectPosition(obj);
-        //    }
-        //}
     }
 
     private bool AreMovementKeysDownThisFrame()
@@ -201,7 +195,6 @@ public class _LevelController : MonoBehaviour
         {
             yield return new WaitForSeconds(turnTime);
             ForceMovement(0, 0);
-            MoveAgents();
         }
     }
 
@@ -214,7 +207,6 @@ public class DuplicatedTile : Exception
     int y;
     public DuplicatedTile(_GridElement existingObj, _GridElement newObj)
     {
-
         name1 = existingObj.name;
         name2 = newObj.name;
         x = newObj.X;
