@@ -38,15 +38,24 @@ public abstract class _Creature : _Entity
     private AnimationCurve movementCurve;
 #pragma warning restore
 
-    public static bool repeatMovement = false;
-
     private bool isMoving = false;
     private float startTime;
     
     private Vector2 startPos;
     private Vector2 endPos;
 
-    #region Movement
+    protected Vector2Int movementVector;
+
+    private Animator animator;
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+        endPos = new Vector2();
+        startPos = new Vector2();
+        movementVector = new Vector2Int();
+    }
+
     /// <summary>
     /// Up is positive, down is negative
     /// </summary>
@@ -68,69 +77,65 @@ public abstract class _Creature : _Entity
     /// </summary>
     /// <param name="x">Right = 1; Left = -1</param>
     /// <param name="y">Up = 1; Right = -1</param>
-    private void Move(int x, int y)
+    protected void Move(int x, int y)
     {
         if (x > 1 || x < -1 || y > 1 || y < -1)
             throw new ArgumentOutOfRangeException(String.Format("Can only move by 1 tile at a time! (Tried moving {0} tiles horizontal and {1} tiles vertical)", x, y));
 
-        if (!isMoving)
+        movementVector.Set(x, y);
+        // Get the target tile reference
+        _Tile targetTile = _LevelController.instance.tiles[X + x, Y + y];
+
+        if(targetTile is Floor)
         {
-            repeatMovement = false;
-            endPos = new Vector2((int)transform.position.x + x, (int)transform.position.y + y);
+            Floor floor = targetTile as Floor;
+            bool monsterOutcome = true, knightOutcome = true, trapOutcome = true;
+            // if floor.thing is not null it returns .armed property, if it is null, it returns null (and doesn't throw NullReference) then null is treated as false (using ?? operator)
+            if ( (floor.thing as Trap)?.armed ?? false ) 
+            {
+                trapOutcome = DealWithTrap();
+            }
+            if (floor.agent is Monster)
+            {
+                monsterOutcome = DealWithMonster();
+            }
+            else if (floor.agent is Knight)
+            {
+                knightOutcome = DealWithKnight();
+            }
+            // Make decision if creature should move
+            if(monsterOutcome && knightOutcome && trapOutcome)
+            {
+                Translate(x, y);
+                if(this is Player) Player.repeatMovement = false;
+            }
+            
+        }
+        else if(targetTile is Door)
+        {
+            if ((targetTile as Door).Walkable)
+                Translate(2 * x, 2 * y);
+            else if (DealWithDoor())
+                Translate(2 * x, 2 * y);
         }
 
-        try
-        {
-            _Tile tempTile = _LevelController.instance.tiles[(int)endPos.x, (int)endPos.y];
-            // Tile at offset position must be floor, otherwise do nothing (this should change as here the enemies move event should be invoked)
-
-            if (tempTile is Floor && tempTile.Walkable && !isMoving)
-            {
-                Floor floor = tempTile as Floor;
-
-                if ((floor.thing as Trap)?.armed ?? false)
-                {
-                    if (DealWithTrap())
-                        StartMovement();
-                }
-                else
-                    StartMovement();
-
-            }
-            else if (tempTile is Door && !tempTile.Walkable && !isMoving)
-            {
-                Debug.Log("Trying to open");
-                (tempTile as Door).Open(this);
-            }
-            else if (tempTile is Door && tempTile.Walkable && !isMoving)
-            {
-                endPos = new Vector2(tempTile.X + x, tempTile.Y + y);
-                startPos = transform.position;
-                startTime = Time.time;
-                isMoving = true;
-            }
-            else
-            { 
-                return; // Here maybe we should return some info about the failure of movement
-            }
-        }
-        catch (IndexOutOfRangeException)
-        {
-            // Do nothing if index is out of range
-        }
     }
 
+    protected abstract void Translate(int x, int y);
     public abstract bool DealWithTrap();
-    //public abstract bool DealWithKnigth();
-    //public abstract bool DealWithMonster();
+    public abstract bool DealWithKnight();
+    public abstract bool DealWithMonster();
+    public abstract bool DealWithDoor();
 
-    private void StartMovement()
+    protected void StartMovement(float endPosX, float endPosY)
     {
+        Debug.Log("Start movement " + endPosX + " " + endPosY);
         startPos = transform.position;
+        endPos.Set(endPosX, endPosY);
         startTime = Time.time;
         isMoving = true;
+        if(this is Player)animator.SetBool("isMoving", true);
     }
-    #endregion 
 
     protected void Update()
     {
@@ -139,8 +144,10 @@ public abstract class _Creature : _Entity
             transform.position = Vector2.Lerp(startPos, endPos, movementCurve.Evaluate(Time.time - startTime) * movementSpeed);
             if ((Vector2)transform.position == endPos)
             {
-                repeatMovement = true;
                 isMoving = false;
+                if(this is Player) animator.SetBool("isMoving", false);
+                if (this is Player)
+                    Player.repeatMovement = true;
             }
         }
     }
