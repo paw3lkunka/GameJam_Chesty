@@ -53,8 +53,6 @@ public class _LevelController : MonoBehaviour
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         mainAnimator = player.GetComponent<Animator>();
-        mainAnimator.SetInteger("moveX", 0);
-        mainAnimator.SetInteger("moveY", 0);
         StartTimer();
 
         // Generating current level bounds dynamically **********************

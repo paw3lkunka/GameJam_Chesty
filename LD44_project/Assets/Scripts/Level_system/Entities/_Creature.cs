@@ -24,9 +24,9 @@ public abstract class _Creature : _Entity
         try
         {
             ref uint tileCoins = ref (_LevelController.instance.tiles[X, Y] as Floor).coins;
+            if (this is Player && tileCoins != 0) _LevelController.mainAnimator.SetTrigger("coinGain");
             money += tileCoins;
             tileCoins = 0;
-            if (this is Player && CurrentTile.coins != 0) _LevelController.mainAnimator.SetTrigger("coinGain");
         }
         catch (NullReferenceException) { }
     }
@@ -86,8 +86,14 @@ public abstract class _Creature : _Entity
         movementVector.Set(x, y);
         if (this is Player)
         {
-            animator.SetInteger("moveX", x);
-            animator.SetInteger("moveY", y);
+            if (y > 0)
+                animator.SetTrigger("moveUp");
+            else if (y < 0)
+                animator.SetTrigger("moveDown");
+            else if (x > 0)
+                animator.SetTrigger("moveRight");
+            else if (x < 0)
+                animator.SetTrigger("moveLeft");
         }
         // Get the target tile reference
         _Tile targetTile = _LevelController.instance.tiles[X + x, Y + y];
@@ -148,8 +154,6 @@ public abstract class _Creature : _Entity
     protected virtual void EndMovement()
     {
         isMoving = false;
-        _LevelController.mainAnimator.SetInteger("moveX", 0);
-        _LevelController.mainAnimator.SetInteger("moveY", 0);
     }
 
     protected void Update()

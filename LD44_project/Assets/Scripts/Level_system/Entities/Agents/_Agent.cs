@@ -88,7 +88,7 @@ public abstract class _Agent : _Creature//, IWallet
     public void StepForwards(int a, int b)
     {
         Debug.Log("Called step forwards");
-        if(path != null)
+        if(path != null && path.Count != 0)
         {
             MoveTowards(path[pathProgress]);
             if (pathProgress < path.Count - 1) pathProgress++;

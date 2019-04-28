@@ -7,8 +7,9 @@ using System;
 public class Monster : _Agent
 {
 
-    private void Start()
+    private new void Start()
     {
+        base.Start();
         // create a grid
         //PathFind.Grid grid = new PathFind.Grid(_LevelController.instance.monstersTilemap.GetLength(0), _LevelController.instance.monstersTilemap.GetLength(1), _LevelController.instance.monstersTilemap);
 
