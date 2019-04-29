@@ -9,12 +9,12 @@ public static class _OurLib
     {
         return new Vector3(Mathf.RoundToInt(v3.x), Mathf.RoundToInt(v3.y));
     }
-
+    
     public static void SnapPosition(this MonoBehaviour mb)
     {
         mb.transform.position = Snap(mb.transform.position);
     }
-
+    
     public static int IntCord( this MonoBehaviour mb, char axis)
     {
         switch (axis)

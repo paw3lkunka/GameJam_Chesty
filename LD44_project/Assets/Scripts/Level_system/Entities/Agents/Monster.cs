@@ -7,6 +7,11 @@ using System;
 public class Monster : _Agent
 {
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     private new void Start()
     {
         base.Start();

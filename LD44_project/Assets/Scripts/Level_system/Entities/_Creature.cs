@@ -35,6 +35,11 @@ public abstract class _Creature : _Entity
     public abstract bool DealWithDoor(Door door);
     public abstract void Die();
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     protected override void Start()
     {
         base.Start();

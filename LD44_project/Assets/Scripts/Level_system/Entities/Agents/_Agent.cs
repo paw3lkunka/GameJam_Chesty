@@ -16,7 +16,11 @@ public abstract class _Agent : _Creature //, IWallet
     protected PathFind.Grid grid;
     protected List<PathFind.Point> path;
     private int pathProgress = 0;
-    
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     protected override void Start()
     {

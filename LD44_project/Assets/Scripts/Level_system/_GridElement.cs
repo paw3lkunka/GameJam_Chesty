@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using static _OurLib;
 
 public abstract class _GridElement : MonoBehaviour
 {
@@ -10,10 +11,18 @@ public abstract class _GridElement : MonoBehaviour
     public int X => (int)transform.position.x;
     public int Y => (int)transform.position.y;
 
-    protected virtual void Start()
+    protected virtual void OnValidate()
+    {
+        transform.position = Snap(transform.position);
+    }
+
+    protected virtual void Awake()
     {
         // Snap object position to absolute values
-        this.SnapPosition();
+    }
+
+    protected virtual void Start()
+    {
         // Tiles shouldn't have negative position for convenience
         if (transform.position.x < 0 || transform.position.y < 0)
             Debug.Log(new InvalidGridObjectPosition(this).Message);
