@@ -40,14 +40,30 @@ public abstract class _Agent : _Creature //, IWallet
 
     protected override void StartMovement(float endPosX, float endPosY)
     {
-        (_LevelController.instance.tiles[X, Y] as Floor).agent = null;
+        try
+        {
+            (_LevelController.instance.tiles[X, Y] as Floor).agent = null;
         base.StartMovement(endPosX, endPosY);
+        }
+        catch (NullReferenceException) // Hardcode jak chuj
+        {
+            Debug.Log("Ten dziwny null reference !!! ");
+            RandomTileTarget();
+        }
     }
 
     protected override void EndMovement()
     {
-        (_LevelController.instance.tiles[X, Y] as Floor).agent = this;
-        base.EndMovement();
+        try
+        {
+            (_LevelController.instance.tiles[X, Y] as Floor).agent = this;
+            base.EndMovement();
+        }
+        catch (NullReferenceException) // Hardcode jak chuj
+        {
+            Debug.Log("Ten dziwny null reference !!! ");
+            RandomTileTarget();
+        }
     }
 
     protected void RandomTileTarget()
