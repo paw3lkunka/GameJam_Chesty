@@ -25,6 +25,11 @@ public class Knight : _Agent
     private KnightStates knightState = KnightStates.DoingNothing;
     private KnightStates lastKnightState = KnightStates.DoingNothing;
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     private new void Start()
     {
         base.Start();

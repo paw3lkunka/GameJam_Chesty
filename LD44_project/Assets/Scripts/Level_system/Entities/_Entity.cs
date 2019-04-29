@@ -21,6 +21,11 @@ public abstract class _Entity : _GridElement
         return _LevelController.instance.tiles[X + x, Y + y] as T;
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
     protected override void Start()
     {
         base.Start();

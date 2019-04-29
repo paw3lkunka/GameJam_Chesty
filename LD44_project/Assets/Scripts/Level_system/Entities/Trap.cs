@@ -12,6 +12,11 @@ public class Trap : Thing
     private SpriteRenderer spriteRenderer;
 
     public bool isArmed = true;
+    
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     protected override void Start()
     {

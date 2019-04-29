@@ -9,6 +9,10 @@ public class Floor : _Tile
     public _Agent agent;
     public Thing thing;
     public int coins;
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     protected override void Start()
     {
