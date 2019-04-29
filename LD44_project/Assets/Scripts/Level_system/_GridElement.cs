@@ -13,12 +13,12 @@ public abstract class _GridElement : MonoBehaviour
 
     protected virtual void OnValidate()
     {
+        // Snap object position to absolute values
         transform.position = Snap(transform.position);
     }
 
     protected virtual void Awake()
     {
-        // Snap object position to absolute values
     }
 
     protected virtual void Start()
