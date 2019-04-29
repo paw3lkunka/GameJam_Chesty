@@ -35,6 +35,11 @@ public class _LevelController : MonoBehaviour
 
     public int stage = 1;
 
+    private void OnDestroy()
+    {
+        instance = null;
+    }
+
     private void Awake()
     {
         Time.timeScale = 1;

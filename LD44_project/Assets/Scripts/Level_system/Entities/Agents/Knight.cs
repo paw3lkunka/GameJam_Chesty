@@ -192,6 +192,7 @@ public class Knight : _Agent
 
     public override bool DealWithPlayer()
     {
+        animator.SetTrigger("attack");
         _LevelController.instance.player.money -= attack;
         return false;
     }

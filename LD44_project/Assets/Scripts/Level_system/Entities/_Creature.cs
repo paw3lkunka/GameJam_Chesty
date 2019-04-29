@@ -25,7 +25,7 @@ public abstract class _Creature : _Entity
     private Vector2 endPos;
     private float startTime;
     
-    protected Animator animator;
+    public Animator animator;
 
     // Abstract methods for derived classes to implement
     protected abstract void Translate(int x, int y);
