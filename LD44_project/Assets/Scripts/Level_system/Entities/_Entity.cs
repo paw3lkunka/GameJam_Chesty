@@ -20,4 +20,9 @@ public abstract class _Entity : _GridElement
     public T CurrentTilePlus<T>( int x, int y) where T: _Tile{
         return _LevelController.instance.tiles[X + x, Y + y] as T;
     }
+
+    protected override void Start()
+    {
+        base.Start();
+    }
 }

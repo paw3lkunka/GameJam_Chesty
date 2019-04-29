@@ -9,5 +9,9 @@ public abstract class _Tile : _GridElement
 
     public abstract bool Walkable { get; }
 
+    protected override void Start()
+    {
+        base.Start();
+    }
 }
 

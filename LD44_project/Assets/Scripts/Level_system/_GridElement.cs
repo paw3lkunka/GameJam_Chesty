@@ -5,15 +5,18 @@ using System;
 
 public abstract class _GridElement : MonoBehaviour
 {
+    // Basic and very useful accesors to int casted object transforms
+    // Use them instead of transform.position.x/y
     public int X => (int)transform.position.x;
     public int Y => (int)transform.position.y;
 
-    private void OnValidate()
+    protected virtual void Start()
     {
+        // Snap object position to absolute values
         this.SnapPosition();
+        // Tiles shouldn't have negative position for convenience
         if (transform.position.x < 0 || transform.position.y < 0)
             Debug.Log(new InvalidGridObjectPosition(this).Message);
-            //throw new InvalidGridObjectPosition(this);
     }
 }
 public class InvalidGridObjectPosition : Exception

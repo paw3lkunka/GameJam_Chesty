@@ -1,15 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Door : _Tile
 {
 #pragma warning disable
     [SerializeField] private Sprite doorClosed;
     [SerializeField] private Sprite doorOpen;
     [SerializeField] private Sprite doorDestroyed;
-    [SerializeField] private Sprite[] crackDecals;
+    [SerializeField] [Tooltip("First should be the most damaged")]
+                     private Sprite[] crackDecals;
 #pragma warning restore
 
     [SerializeField]
@@ -20,8 +24,12 @@ public class Door : _Tile
 
     private SpriteRenderer spriteRenderer;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+        if (crackDecals.Length != doorHitDurability)
+            throw new TooLittleCrackDecalSprites();
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.sprite = isOpen ? doorOpen : doorClosed;
     }
@@ -32,7 +40,7 @@ public class Door : _Tile
         {
             spriteRenderer.sprite = doorOpen;
             isOpen = true;
-            _LevelController.instance.monstersTilemap[(int)transform.position.x, (int)transform.position.y] = true;
+            _LevelController.instance.monstersTilemap[X, Y] = true;
             return true;
         }
         else if(creature is Knight)
@@ -46,11 +54,31 @@ public class Door : _Tile
             else
             {
                 isOpen = true;
-                _LevelController.instance.monstersTilemap[(int)transform.position.x, (int)transform.position.y] = true;
+                _LevelController.instance.monstersTilemap[X, Y] = true;
                 spriteRenderer.sprite = doorDestroyed;
                 return true;
             }
         }
         return false;
+    }
+}
+
+[Serializable]
+internal class TooLittleCrackDecalSprites : Exception
+{
+    public TooLittleCrackDecalSprites()
+    {
+    }
+
+    public TooLittleCrackDecalSprites(string message) : base(message)
+    {
+    }
+
+    public TooLittleCrackDecalSprites(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+
+    protected TooLittleCrackDecalSprites(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }

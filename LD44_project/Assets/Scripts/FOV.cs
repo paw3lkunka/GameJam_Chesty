@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using static _OurLib;
 
 public class FOV : MonoBehaviour
@@ -10,9 +11,9 @@ public class FOV : MonoBehaviour
     [Range(0f, 1f)]
     public float visible = 1f;
     [Range(0f, 1f)]
-    public float remembered = 5f;
+    public float remembered = 0.5f;
     [Range(0f, 1f)]
-    public float undiscovered = 0f;
+    public float undiscovered = 0.02f;
 
 
 
@@ -49,8 +50,23 @@ public class FOV : MonoBehaviour
                     scale = undiscovered;
                 
 
-                SpriteRenderer renderer = tiles[i, j].GetComponent<SpriteRenderer>();
-                renderer.color = new Color(1f, 1f, 1f, scale);
+                SpriteRenderer[] renderers = tiles[i, j].GetComponentsInChildren<SpriteRenderer>();
+
+                foreach( var renderer in renderers)
+                {
+                    renderer.color = new Color(1f, 1f, 1f, scale);
+                }
+
+                
+
+                try
+                {
+                    Floor floor = tiles[i, j] as Floor;
+                    floor.agent.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, scale != visible ? 0f : visible );
+                    floor.thing.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, scale);
+
+                }
+                catch (Exception) { }
             }
         }
     }

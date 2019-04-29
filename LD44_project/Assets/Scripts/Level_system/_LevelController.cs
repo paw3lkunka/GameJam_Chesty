@@ -8,7 +8,7 @@ using System;
 /// </summary>
 public class _LevelController : MonoBehaviour
 {
-    public static _LevelController instance = null;
+    public static _LevelController instance;
 
     public static Animator mainAnimator;
     public Player player;
@@ -37,6 +37,7 @@ public class _LevelController : MonoBehaviour
 
     private void Awake()
     {
+        Time.timeScale = 1;
         // ==========================
         // Singleton initialization
         if (instance == null)
@@ -47,6 +48,8 @@ public class _LevelController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        DontDestroyOnLoad(gameObject);
         // ==========================
 
         ForceMovement += (int a, int b) => Debug.Log("Event aaaaa");
@@ -60,8 +63,8 @@ public class _LevelController : MonoBehaviour
 
         foreach (_GridElement element in FindObjectsOfType<_GridElement>())
         {
-            maxX = (int)(maxX < element.X ? element.X : maxX);
-            maxY = (int)(maxY < element.Y ? element.Y : maxY);
+            maxX = (maxX < element.X ? element.X : maxX);
+            maxY = (maxY < element.Y ? element.Y : maxY);
         }
         // *****************************************************************
 

@@ -2,30 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Trap : Thing
 {
-    private new SpriteRenderer renderer = null;
-    public Sprite armedS;
-    public Sprite disarmedS;
+    [SerializeField] private Sprite trapArmed;
+    [SerializeField] private Sprite trapDisarmed;
+    [SerializeField] private int damage = 10;
 
-    public bool armed = true;
+    private SpriteRenderer spriteRenderer;
 
-    [SerializeField]
-    private int damage = 10;
+    public bool isArmed = true;
 
-    private void Start()
+    protected override void Start()
     {
-        renderer = GetComponent<SpriteRenderer>();
-        renderer.sprite = armedS;
+        base.Start();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = isArmed ? trapArmed : trapDisarmed;
     }
 
     //returns damage on first activation, then 0;
     public int Activate()
     {
-        if (armed)
+        if (isArmed)
         {
-            armed = false;
-            renderer.sprite = disarmedS;
+            isArmed = false;
+            spriteRenderer.sprite = trapDisarmed;
             return damage;
         }
         else

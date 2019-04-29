@@ -1,76 +1,46 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 [System.Serializable]
+[RequireComponent(typeof(Animator))]
 public abstract class _Creature : _Entity
 {
-    #region Money
-    [SerializeField]
-    public uint money = 1;
-    public virtual void DropCoins(uint amount)
-    {
-        if ( amount <= money)
-        {
-            (_LevelController.instance.tiles[X, Y] as Floor).coins += amount;
-            money -= amount;
-            if (this is Player) _LevelController.mainAnimator.SetTrigger("coinLoss");
-        }
-    }
-
-    public void CollectCoins()
-    {
-        try
-        {
-            ref uint tileCoins = ref (_LevelController.instance.tiles[X, Y] as Floor).coins;
-            if (this is Player && tileCoins != 0) _LevelController.mainAnimator.SetTrigger("coinGain");
-            money += tileCoins;
-            tileCoins = 0;
-        }
-        catch (NullReferenceException) { }
-    }
-    #endregion
-
 #pragma warning disable
-    [SerializeField]
-    private float movementSpeed = 5f;
-    [SerializeField]
-    private AnimationCurve movementCurve;
+
+    [SerializeField] private float movementSpeed = 5f;
+    [SerializeField] private AnimationCurve movementCurve;
+
 #pragma warning restore
 
+    public int money = 1;
     public bool isMoving = false;
-    private float startTime;
-    
-    private Vector2 startPos;
-    private Vector2 endPos;
-
     protected Vector2Int movementVector;
 
+    private Vector2 startPos;
+    private Vector2 endPos;
+    private float startTime;
+    
     protected Animator animator;
 
-    private void Start()
+    // Abstract methods for derived classes to implement
+    protected abstract void Translate(int x, int y);
+    public abstract bool DealWithPlayer();
+    public abstract bool DealWithTrap();
+    public abstract bool DealWithKnight();
+    public abstract bool DealWithMonster();
+    public abstract bool DealWithDoor();
+    public abstract void Die();
+
+    protected override void Start()
     {
+        base.Start();
         animator = GetComponent<Animator>();
         endPos = new Vector2();
         startPos = new Vector2();
         movementVector = new Vector2Int();
-    }
-
-    /// <summary>
-    /// Up is positive, down is negative
-    /// </summary>
-    public void MoveVert(int n)
-    {
-        Move(0, n);
-    }
-
-    /// <summary>
-    /// Right is positive, left is negative
-    /// </summary>
-    public void MoveHoriz(int n)
-    {
-        Move(n, 0);
     }
 
     /// <summary>
@@ -80,10 +50,14 @@ public abstract class _Creature : _Entity
     /// <param name="y">Up = 1; Right = -1</param>
     protected void Move(int x, int y)
     {
-        //if (x > 1 || x < -1 || y > 1 || y < -1)
-        //    throw new ArgumentOutOfRangeException(String.Format("Can only move by 1 tile at a time! (Tried moving {0} tiles horizontal and {1} tiles vertical)", x, y));
+        // Checking an agent wants to move. Agent shouldn't want to move more than one tile at a time, so here we check for movement validity
+        if (x > 1 || x < -1 || y > 1 || y < -1)
+            throw new MoveByMoreThanOneTileException(String.Format("Can only move by 1 tile at a time! (Tried moving {0} tiles horizontal and {1} tiles vertical)", x, y));
 
+        // Setting up the movement vector, for other functions to know which way we're heading at the moment
         movementVector.Set(x, y);
+
+        // Temporary animation solution, remove type checking for other creatures to work
         if (this is Player)
         {
             if (y > 0)
@@ -95,6 +69,8 @@ public abstract class _Creature : _Entity
             else if (x < 0)
                 animator.SetTrigger("moveLeft");
         }
+
+
         // Get the target tile reference
         _Tile targetTile = _LevelController.instance.tiles[X + x, Y + y];
 
@@ -102,8 +78,9 @@ public abstract class _Creature : _Entity
         {
             Floor floor = targetTile as Floor;
             bool monsterOutcome = true, knightOutcome = true, trapOutcome = true;
-            // if floor.thing is not null it returns .armed property, if it is null, it returns null (and doesn't throw NullReference) then null is treated as false (using ?? operator)
-            if ( (floor.thing as Trap)?.armed ?? false ) 
+
+            // Deal with things in way of our creature
+            if ( (floor.thing as Trap)?.isArmed ?? false) // if floor.thing is not null it returns .armed property, if it is null, it returns null (and doesn't throw NullReference) then null is treated as false (using ?? operator)
             {
                 trapOutcome = DealWithTrap();
             }
@@ -115,39 +92,39 @@ public abstract class _Creature : _Entity
             {
                 knightOutcome = DealWithKnight();
             }
+
             // Make decision if creature should move
             if(monsterOutcome && knightOutcome && trapOutcome)
             {
                 Translate(x, y);
-                if(this is Player) Player.repeatMovement = false;
             }
             
         }
         else if(targetTile is Door)
         {
             if ((targetTile as Door).Walkable)
+            {
                 Translate(2 * x, 2 * y);
-            else if (DealWithDoor())
+            }
+            else if (DealWithDoor() == true)
+            {
                 Translate(2 * x, 2 * y);
+            }
         }
 
     }
 
-    protected abstract void Translate(int x, int y);
-    public abstract bool DealWithTrap();
-    public abstract bool DealWithKnight();
-    public abstract bool DealWithMonster();
-    public abstract bool DealWithDoor();
-
+    /// <summary>
+    /// Initiates linear interpolation of movement from current position to specified
+    /// </summary>
     protected virtual void StartMovement(float endPosX, float endPosY)
     {
         if(!isMoving)
         {
-            startPos = transform.position;
+            startPos.Set(X, Y);
             endPos.Set(endPosX, endPosY);
             startTime = Time.time;
             isMoving = true;
-            
         }
     }
 
@@ -156,7 +133,10 @@ public abstract class _Creature : _Entity
         isMoving = false;
     }
 
-    protected void Update()
+    /// <summary>
+    /// Handles interpolated movement over time specified by movementSpeed
+    /// </summary>
+    protected virtual void Update()
     {
         if (isMoving)
         {
@@ -166,5 +146,58 @@ public abstract class _Creature : _Entity
                 EndMovement();
             }
         }
+    }
+
+#region Money
+
+
+
+    public virtual void DropCoins(int amount)
+    {
+        if (amount <= money)
+        {
+            (_LevelController.instance.tiles[X, Y] as Floor).coins += amount;
+            money -= amount;
+
+            // Fast animation hack
+            // if (this is Player) _LevelController.mainAnimator.SetTrigger("coinLoss");
+        }
+    }
+
+    public void CollectCoins()
+    {
+        try
+        {
+            ref int tileCoins = ref (_LevelController.instance.tiles[X, Y] as Floor).coins;
+            money += tileCoins;
+            tileCoins = 0;
+
+            // Fast animation hack
+            // if (this is Player && tileCoins != 0) _LevelController.mainAnimator.SetTrigger("coinGain");
+        }
+        catch (NullReferenceException) { }
+    }
+
+
+#endregion
+}
+
+[Serializable]
+internal class MoveByMoreThanOneTileException : Exception
+{
+    public MoveByMoreThanOneTileException()
+    {
+    }
+
+    public MoveByMoreThanOneTileException(string message) : base(message)
+    {
+    }
+
+    public MoveByMoreThanOneTileException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+
+    protected MoveByMoreThanOneTileException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
     }
 }

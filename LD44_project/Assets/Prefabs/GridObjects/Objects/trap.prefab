@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 706909690c5ec4b4d961d5cbb3f02438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  armedS: {fileID: 21300000, guid: 12b4a693a6d888f4383acb14fc2aa552, type: 3}
-  disarmedS: {fileID: 21300000, guid: f4ba2fd9b63253c429522ed304c7be00, type: 3}
-  armed: 1
-  damage: 10
+  trapArmed: {fileID: 21300000, guid: 12b4a693a6d888f4383acb14fc2aa552, type: 3}
+  trapDisarmed: {fileID: 21300000, guid: f4ba2fd9b63253c429522ed304c7be00, type: 3}
+  damage: 1
+  isArmed: 1

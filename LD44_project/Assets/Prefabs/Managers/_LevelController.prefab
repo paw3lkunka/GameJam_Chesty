@@ -43,3 +43,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1504f2f94760e7f49b4100ad77e67f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  monsters: []
+  knights: []
+  turnTime: 5
+  stage: 1

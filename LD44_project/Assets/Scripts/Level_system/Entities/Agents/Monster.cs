@@ -43,7 +43,7 @@ public class Monster : _Agent
 
     }
 
-    private void Die()
+    public override void Die()
     {
         _LevelController.instance.ForceMovement -= StepForwards;
         _LevelController.instance.monsters.Remove(this);
@@ -54,6 +54,7 @@ public class Monster : _Agent
     {
         StartMovement(X + x, Y + y);
     }
+
     public override bool DealWithTrap()
     {
         return true;
@@ -71,6 +72,11 @@ public class Monster : _Agent
     }
 
     public override bool DealWithDoor()
+    {
+        return false;
+    }
+
+    public override bool DealWithPlayer()
     {
         return false;
     }

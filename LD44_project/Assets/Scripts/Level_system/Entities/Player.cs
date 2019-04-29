@@ -9,33 +9,22 @@ public class Player : _Creature
     [SerializeField]
     private (bool state, int x, int y) coinsAutoCollect;
 
-    public static bool repeatMovement = true;
-
     public event Action LostEvent;
-    public event Action OnTileEnterPlayer;
 
-    private void Awake()
+    protected override void Start()
     {
+        base.Start();
         _LevelController.instance.ForceMovement += Move;
         LostEvent += _GameOver.GameOver;
     }
 
-    public void AddMoney(uint x) => money += x;
-    public void SubMoney(uint x)
-    {
-        if (money > x)
-            money -= x;
-        else
-            LostEvent();
-    }
-
-    public override void DropCoins(uint amount)
+    public override void DropCoins(int amount)
     {
         coinsAutoCollect = (false, X, Y);
         base.DropCoins( amount );
     }
 
-    private new void Update()
+    protected override void Update()
     {
         base.Update();
         
@@ -45,25 +34,21 @@ public class Player : _Creature
             coinsAutoCollect.state = true;
     }
 
-    protected override void EndMovement()
-    {
-        base.EndMovement();
-        Player.repeatMovement = true;
-    }
-
     protected override void Translate(int x, int y)
     {
         StartMovement(X + x, Y + y);
     }
+
     public override bool DealWithTrap()
     {
-        return !((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).thing as Trap).armed;
+        return !((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).thing as Trap).isArmed;
     }
 
     public override bool DealWithKnight()
     {
         //SubMoney(((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).agent as Knight).AttackPoints);
-        SubMoney((CurrentTilePlus<Floor>(movementVector.x, movementVector.y).agent as Knight).AttackPoints);
+        //money -= CurrentTilePlus<Floor>(movementVector.x, movementVector.y).agent as Knight).AttackPoints;
+        transform.position = new Vector2(X - movementVector.x, Y - movementVector.y);
         return false;
     }
 
@@ -72,6 +57,8 @@ public class Player : _Creature
         switch (_LevelController.instance.stage)
         {
             case 1:
+                // THIS IS TEMPORARY AND SHOULD BE CHANGED
+                money -= 1;
                 return false;
             case 2:
                 return true;
@@ -86,4 +73,13 @@ public class Player : _Creature
         return true;
     }
 
+    public override bool DealWithPlayer()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void Die()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -26,7 +26,7 @@ public class CoinsDisplay : MonoBehaviour
 
     void Update()
     {
-        uint amount = floor.coins;
+        int amount = floor.coins;
 
         if (amount == 0)
         {

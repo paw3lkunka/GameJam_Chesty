@@ -12,6 +12,8 @@ public class _GameManager : MonoBehaviour
 
     private void Awake()
     {
+        //Time.timeScale = 1;
+
         if(instance == null)
         {
             instance = this;
@@ -22,14 +24,14 @@ public class _GameManager : MonoBehaviour
         }
 
         // Prevent the game manager from being destroyed while loading scenes
-        DontDestroyOnLoad(gameObject);
+       // DontDestroyOnLoad(gameObject);
     }
 
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene("Menu");
         }
     }
 }

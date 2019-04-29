@@ -1,31 +1,26 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 
-public abstract class _Agent : _Creature//, IWallet
+public abstract class _Agent : _Creature //, IWallet
 {
-    [SerializeField]
-    protected _GridElement currentTarget;
-
-    [SerializeField]
-    protected readonly int baseHealth;
-    [SerializeField]
-    protected int health;
-    [SerializeField]
-    protected uint attack;
+    [SerializeField] protected readonly int baseHealth;
+    [SerializeField] protected int health;
+    [SerializeField] protected int attack;
+    public int AttackPoints => attack;
 
     protected PathFind.Point _to;
     protected PathFind.Point _from;
     protected PathFind.Grid grid;
-
-    public uint AttackPoints => attack;
-    
     protected List<PathFind.Point> path;
     private int pathProgress = 0;
+    
 
-    protected void Start()
+    protected override void Start()
     {
+        base.Start();
         path = new List<PathFind.Point>();
         _to = new PathFind.Point(X, Y);
         _from = new PathFind.Point(X, Y);
@@ -34,19 +29,20 @@ public abstract class _Agent : _Creature//, IWallet
         ExtrapolatePath(path);
     }
 
-    protected new void Update()
+    protected override void Update()
     {
         base.Update();
     }
+
     protected override void StartMovement(float endPosX, float endPosY)
     {
-        CurrentTile.agent = null;
+        (_LevelController.instance.tiles[X, Y] as Floor).agent = null;
         base.StartMovement(endPosX, endPosY);
     }
 
     protected override void EndMovement()
     {
-        CurrentTile.agent = this;
+        (_LevelController.instance.tiles[X, Y] as Floor).agent = this;
         base.EndMovement();
     }
 
@@ -87,8 +83,7 @@ public abstract class _Agent : _Creature//, IWallet
 
     public void StepForwards(int a, int b)
     {
-        Debug.Log("Called step forwards");
-        if(path != null && path.Count != 0)
+        if (path != null && path.Count != 0)
         {
             MoveTowards(path[pathProgress]);
             if (pathProgress < path.Count - 1) pathProgress++;
@@ -98,26 +93,38 @@ public abstract class _Agent : _Creature//, IWallet
                 RandomTileTarget();
             }
         }
+        else throw new EmptyPathfindingPath();
     }
 
     public void MoveTowards(PathFind.Point point)
     {
-        Debug.Log("Called move towards");
         int x = point.x - (int)transform.position.x;
         int y = point.y - (int)transform.position.y;
-        Move(x, y);
-    }
+        if(Mathf.Abs(x) > 1 || Mathf.Abs(y) > 1)
+        {
+            Debug.Log("Agent " + this.ToString() + " tried to move wrongly! Trying to fix this issue.");
+            if (x > 1)
+                x--;
+            else if (x < -1)
+                x++;
 
-    private bool CheckTile(int x, int y)
-    {
-        return _LevelController.instance.tiles[X + x, Y + y].Walkable;
+            if (y > 1)
+                y--;
+            else if (y < -1)
+                y++;
+            pathProgress--;
+            if (Mathf.Abs(x) <= 1 || Mathf.Abs(y) <= 1) Debug.Log("Path succesfully fixed.");
+            else throw new MoveByMoreThanOneTileException("Agent tried to move " + x + " " + y + " tiles, even after fixing.");
+        }
+        Move(x, y);
     }
 
     public void Attack(_Agent opponent)
     {
-        opponent.health -= (int)attack / 2 + (int)attack * (baseHealth / 200);
+        //opponent.health -= (int)attack / 2 + (int)attack * (baseHealth / 200);
+        opponent.health -= attack;
         if (opponent.health < 0)
-            Destroy(opponent.gameObject);
+            opponent.Die();
 
     }
 
@@ -125,11 +132,8 @@ public abstract class _Agent : _Creature//, IWallet
     {
         try
         {
-            while (true)
-            {
-                Attack(opponent);
-                opponent.Attack(this);
-            }
+            Attack(opponent);
+            opponent.Attack(this);
         }
         catch (NullReferenceException) { }
     }
@@ -139,8 +143,24 @@ public abstract class _Agent : _Creature//, IWallet
         return Mathf.Pow(this.X - element.X, 2) + Mathf.Pow(this.Y - element.Y, 2);
     }
 
-    /*
-    public abstract uint Coins { get; set; }
-    public abstract void AddCoins();
-    public abstract void SubCoins();*/
+}
+
+[Serializable]
+internal class EmptyPathfindingPath : Exception
+{
+    public EmptyPathfindingPath()
+    {
+    }
+
+    public EmptyPathfindingPath(string message) : base(message)
+    {
+    }
+
+    public EmptyPathfindingPath(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+
+    protected EmptyPathfindingPath(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
 }

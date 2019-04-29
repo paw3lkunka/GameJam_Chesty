@@ -8,5 +8,10 @@ public class Floor : _Tile
     // Three main reference fields for storing information about contents of current floor tile
     public _Agent agent;
     public Thing thing;
-    public uint coins;
+    public int coins;
+
+    protected override void Start()
+    {
+        base.Start();
+    }
 }

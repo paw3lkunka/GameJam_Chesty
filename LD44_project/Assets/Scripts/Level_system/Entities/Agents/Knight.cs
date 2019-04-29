@@ -145,7 +145,7 @@ public class Knight : _Agent
         StartMovement(X + x, Y + y);
     }
 
-    private void Die()
+    public override void Die()
     {
         _LevelController.instance.ForceMovement -= StepForwards;
         _LevelController.instance.ForceMovement -= KnightAI;
@@ -179,6 +179,9 @@ public class Knight : _Agent
         return (_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Door).Open(this);
     }
 
-
-
+    public override bool DealWithPlayer()
+    {
+        _LevelController.instance.player.money -= attack;
+        return false;
+    }
 }
