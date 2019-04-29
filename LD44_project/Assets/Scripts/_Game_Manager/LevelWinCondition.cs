@@ -32,7 +32,6 @@ public class LevelWinCondition : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-
                 SceneManager.LoadScene(1);
             }
         }
