@@ -14,7 +14,8 @@ public class Player : _Creature
     protected override void Start()
     {
         base.Start();
-        _LevelController.instance.ForceMovement += Move;
+        _LevelController.instance.MovementEvaluation += EvaluateMove;
+        _LevelController.instance.MovementExecution += ExecuteMove;
         LostEvent += _GameOver.GameOver;
     }
 
@@ -39,26 +40,25 @@ public class Player : _Creature
         StartMovement(X + x, Y + y);
     }
 
-    public override bool DealWithTrap()
+    public override bool DealWithTrap(Trap trap)
     {
-        return !((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).thing as Trap).isArmed;
+        money -= trap.Damage;
+        trap.isArmed = false;
+        return true;
     }
 
-    public override bool DealWithKnight()
+    public override bool DealWithKnight(Knight knight)
     {
-        //SubMoney(((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).agent as Knight).AttackPoints);
-        //money -= CurrentTilePlus<Floor>(movementVector.x, movementVector.y).agent as Knight).AttackPoints;
-        transform.position = new Vector2(X - movementVector.x, Y - movementVector.y);
+        money -= knight.AttackPoints;
         return false;
     }
 
-    public override bool DealWithMonster()
+    public override bool DealWithMonster(Monster monster)
     {
         switch (_LevelController.instance.stage)
         {
             case 1:
-                // THIS IS TEMPORARY AND SHOULD BE CHANGED
-                money -= 1;
+                money -= monster.AttackPoints;
                 return false;
             case 2:
                 return true;
@@ -67,9 +67,9 @@ public class Player : _Creature
         }
     }
 
-    public override bool DealWithDoor()
+    public override bool DealWithDoor(Door door)
     {
-        (_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Door).Open(this);
+        door.Open(this);
         return true;
     }
 

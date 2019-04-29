@@ -102,7 +102,7 @@ public abstract class _Agent : _Creature //, IWallet
         int y = point.y - (int)transform.position.y;
         if(Mathf.Abs(x) > 1 || Mathf.Abs(y) > 1)
         {
-            Debug.Log("Agent " + this.ToString() + " tried to move wrongly! Trying to fix this issue.");
+            Debug.Log("Agent " + ToString() + " tried to move wrongly! Trying to fix this issue.");
             if (x > 1)
                 x--;
             else if (x < -1)
@@ -116,7 +116,7 @@ public abstract class _Agent : _Creature //, IWallet
             if (Mathf.Abs(x) <= 1 || Mathf.Abs(y) <= 1) Debug.Log("Path succesfully fixed.");
             else throw new MoveByMoreThanOneTileException("Agent tried to move " + x + " " + y + " tiles, even after fixing.");
         }
-        Move(x, y);
+        EvaluateMove(x, y);
     }
 
     public void Attack(_Agent opponent)

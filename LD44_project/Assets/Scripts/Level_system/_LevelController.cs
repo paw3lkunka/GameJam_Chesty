@@ -19,7 +19,8 @@ public class _LevelController : MonoBehaviour
     [SerializeField]
     private float turnTime = 5f;
     private float elapsedTime = 0f;
-    public event Action<int, int> ForceMovement;
+    public event Action<int, int> MovementEvaluation;
+    public event Action MovementExecution;
 
     // Bool tilemaps for storing the pass-through block information
     public bool[,] knightsTilemap;
@@ -51,8 +52,6 @@ public class _LevelController : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
         // ==========================
-
-        ForceMovement += (int a, int b) => Debug.Log("Event aaaaa");
 
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         mainAnimator = player.GetComponent<Animator>();
@@ -153,7 +152,8 @@ public class _LevelController : MonoBehaviour
             else if (currentFrameAxis.x < 0) arg = (-1, 0); //player.MoveHoriz(-1);
             else if (currentFrameAxis.y > 0) arg = (0, 1);  //player.MoveVert(1);
             else if (currentFrameAxis.y < 0) arg = (0, -1); //player.MoveVert(-1);
-            ForceMovement(arg.h, arg.v);
+            MovementEvaluation(arg.h, arg.v);
+            MovementExecution();
             StartTimer();
         }
 
@@ -199,7 +199,8 @@ public class _LevelController : MonoBehaviour
         while(true)
         {
             yield return new WaitForSeconds(turnTime);
-            ForceMovement(0, 0);
+            MovementEvaluation(0, 0);
+            MovementExecution();
         }
     }
 

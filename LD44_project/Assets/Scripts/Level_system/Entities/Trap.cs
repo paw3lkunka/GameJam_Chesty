@@ -9,6 +9,8 @@ public class Trap : Thing
     [SerializeField] private Sprite trapDisarmed;
     [SerializeField] private int damage = 10;
 
+    public int Damage => damage;
+
     private SpriteRenderer spriteRenderer;
 
     public bool isArmed = true;

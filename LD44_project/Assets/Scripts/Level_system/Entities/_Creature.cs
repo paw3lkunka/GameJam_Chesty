@@ -17,6 +17,7 @@ public abstract class _Creature : _Entity
 
     public int money = 1;
     public bool isMoving = false;
+    private bool monsterOutcome = true, knightOutcome = true, trapOutcome = true;
     protected Vector2Int movementVector;
 
     private Vector2 startPos;
@@ -28,10 +29,10 @@ public abstract class _Creature : _Entity
     // Abstract methods for derived classes to implement
     protected abstract void Translate(int x, int y);
     public abstract bool DealWithPlayer();
-    public abstract bool DealWithTrap();
-    public abstract bool DealWithKnight();
-    public abstract bool DealWithMonster();
-    public abstract bool DealWithDoor();
+    public abstract bool DealWithTrap(Trap trap);
+    public abstract bool DealWithKnight(Knight knight);
+    public abstract bool DealWithMonster(Monster monster);
+    public abstract bool DealWithDoor(Door door);
     public abstract void Die();
 
     protected override void Start()
@@ -48,7 +49,7 @@ public abstract class _Creature : _Entity
     /// </summary>
     /// <param name="x">Right = 1; Left = -1</param>
     /// <param name="y">Up = 1; Right = -1</param>
-    protected void Move(int x, int y)
+    protected void EvaluateMove(int x, int y)
     {
         // Checking an agent wants to move. Agent shouldn't want to move more than one tile at a time, so here we check for movement validity
         if (x > 1 || x < -1 || y > 1 || y < -1)
@@ -74,29 +75,25 @@ public abstract class _Creature : _Entity
         // Get the target tile reference
         _Tile targetTile = _LevelController.instance.tiles[X + x, Y + y];
 
-        if(targetTile is Floor)
+        monsterOutcome = true;
+        trapOutcome = true;
+        knightOutcome = true;
+
+        if (targetTile is Floor)
         {
             Floor floor = targetTile as Floor;
-            bool monsterOutcome = true, knightOutcome = true, trapOutcome = true;
-
             // Deal with things in way of our creature
             if ( (floor.thing as Trap)?.isArmed ?? false) // if floor.thing is not null it returns .armed property, if it is null, it returns null (and doesn't throw NullReference) then null is treated as false (using ?? operator)
             {
-                trapOutcome = DealWithTrap();
+                trapOutcome = DealWithTrap(floor.thing as Trap);
             }
             if (floor.agent is Monster)
             {
-                monsterOutcome = DealWithMonster();
+                monsterOutcome = DealWithMonster(floor.agent as Monster);
             }
             else if (floor.agent is Knight)
             {
-                knightOutcome = DealWithKnight();
-            }
-
-            // Make decision if creature should move
-            if(monsterOutcome && knightOutcome && trapOutcome)
-            {
-                Translate(x, y);
+                knightOutcome = DealWithKnight(floor.agent as Knight);
             }
             
         }
@@ -104,14 +101,23 @@ public abstract class _Creature : _Entity
         {
             if ((targetTile as Door).Walkable)
             {
-                Translate(2 * x, 2 * y);
+                movementVector.Set(2 * x, 2 * y);
             }
-            else if (DealWithDoor() == true)
+            else if (DealWithDoor(targetTile as Door) == true)
             {
-                Translate(2 * x, 2 * y);
+                movementVector.Set(2 * x, 2 * y);
             }
+            //else throw new NotImplementedException("Bad operation on door executed by " + ToString());
         }
 
+    }
+
+    protected void ExecuteMove()
+    {
+        if (monsterOutcome && knightOutcome && trapOutcome)
+        {
+            Translate(movementVector.x, movementVector.y);
+        }
     }
 
     /// <summary>

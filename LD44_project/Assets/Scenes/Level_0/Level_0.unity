@@ -2958,6 +2958,16 @@ PrefabInstance:
       propertyPath: movementCurve.m_Curve.Array.data[1].outWeight
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3990045166908347440, guid: a840d2b74e0c73042923d31990eaffbe,
+        type: 3}
+      propertyPath: m_BodyType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8915100003418223384, guid: a840d2b74e0c73042923d31990eaffbe,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a840d2b74e0c73042923d31990eaffbe, type: 3}
 --- !u!1001 &208907545
@@ -12612,6 +12622,7 @@ GameObject:
   - component: {fileID: 1130789422}
   - component: {fileID: 1130789421}
   - component: {fileID: 1130789420}
+  - component: {fileID: 1130789424}
   m_Layer: 0
   m_Name: knight_idle (3)
   m_TagString: Untagged
@@ -12629,7 +12640,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.001}
@@ -12753,6 +12764,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 332
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &1130789424
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130789419}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1001 &1146262040
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16694,6 +16726,7 @@ GameObject:
   - component: {fileID: 1425863165}
   - component: {fileID: 1425863164}
   - component: {fileID: 1425863163}
+  - component: {fileID: 1425863167}
   m_Layer: 0
   m_Name: knight_idle (2)
   m_TagString: Untagged
@@ -16711,7 +16744,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.001}
@@ -16835,6 +16868,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 331
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &1425863167
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425863162}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1001 &1429976926
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20526,6 +20580,7 @@ GameObject:
   - component: {fileID: 1801026689}
   - component: {fileID: 1801026688}
   - component: {fileID: 1801026691}
+  - component: {fileID: 1801026692}
   m_Layer: 0
   m_Name: knight_idle
   m_TagString: Untagged
@@ -20651,7 +20706,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.001}
@@ -20667,6 +20722,27 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!50 &1801026692
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1801026687}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1001 &1801409960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24622,6 +24698,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4591126860011537343, guid: dfab27e7d3b5afb4a8217fffc1880ff1,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dfab27e7d3b5afb4a8217fffc1880ff1, type: 3}
 --- !u!1001 &8184611003505208906
@@ -24635,6 +24716,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: UIIIIIIII
+      objectReference: {fileID: 0}
+    - target: {fileID: 1196521043377077481, guid: 27e6b2cbafd96ce4198653137edf2acc,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1196521043377077397, guid: 27e6b2cbafd96ce4198653137edf2acc,
         type: 3}

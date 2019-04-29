@@ -31,8 +31,9 @@ public class Knight : _Agent
         monsterDistances = new List<(float, Monster)>();
         // create a grid
         
-        _LevelController.instance.ForceMovement += KnightAI;
-        _LevelController.instance.ForceMovement += StepForwards;
+        _LevelController.instance.MovementEvaluation += KnightAI;
+        _LevelController.instance.MovementEvaluation += StepForwards;
+        _LevelController.instance.MovementExecution += ExecuteMove;
     }
 
     private new void Update()
@@ -147,15 +148,16 @@ public class Knight : _Agent
 
     public override void Die()
     {
-        _LevelController.instance.ForceMovement -= StepForwards;
-        _LevelController.instance.ForceMovement -= KnightAI;
+        _LevelController.instance.MovementEvaluation -= StepForwards;
+        _LevelController.instance.MovementEvaluation -= KnightAI;
+        _LevelController.instance.MovementExecution -= ExecuteMove;
         _LevelController.instance.knights.Remove(this);
         Destroy(gameObject);
     }
 
-    public override bool DealWithTrap()
+    public override bool DealWithTrap(Trap trap)
     {
-        health -= ((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).thing as Trap).Activate();
+        health -= trap.Activate();
         if (health < 0)
         {
             Die();
@@ -163,20 +165,20 @@ public class Knight : _Agent
         return true;
     }
 
-    public override bool DealWithKnight()
+    public override bool DealWithKnight(Knight knight)
     {
         return true;
     }
 
-    public override bool DealWithMonster()
+    public override bool DealWithMonster(Monster monster)
     {
-        Fight((_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Floor).agent as Monster);
+        Fight(monster);
         return true;
     }
 
-    public override bool DealWithDoor()
+    public override bool DealWithDoor(Door door)
     {
-        return (_LevelController.instance.tiles[X + movementVector.x, Y + movementVector.y] as Door).Open(this);
+        return door.Open(this);
     }
 
     public override bool DealWithPlayer()
