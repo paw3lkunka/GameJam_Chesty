@@ -10,7 +10,6 @@ public class _LevelController : MonoBehaviour
 {
     public static _LevelController instance;
 
-    public static Animator mainAnimator;
     public Player player;
     public List<Monster> monsters;
     public List<Knight> knights;
@@ -39,6 +38,7 @@ public class _LevelController : MonoBehaviour
     private void Awake()
     {
         Time.timeScale = 1;
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         // ==========================
         // Singleton initialization
         if (instance == null)
@@ -50,11 +50,8 @@ public class _LevelController : MonoBehaviour
             Destroy(gameObject);
         }
 
-        DontDestroyOnLoad(gameObject);
         // ==========================
-
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        mainAnimator = player.GetComponent<Animator>();
+        
         StartTimer();
 
         // Generating current level bounds dynamically **********************

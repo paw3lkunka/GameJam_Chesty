@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static _OurLib;
 
+
 public class Knight : _Agent
 {
 #pragma warning disable
@@ -13,6 +14,8 @@ public class Knight : _Agent
     [SerializeField] private int greed = 1;
     [SerializeField] private int honour = 1;
     [SerializeField] private int fear = 1;
+
+    //private Animator animator;
 
     private float distanceToPlayer = 0f;
     private (float, Monster) distanceToMonster;
@@ -33,6 +36,7 @@ public class Knight : _Agent
     private new void Start()
     {
         base.Start();
+        animator = GetComponent<Animator>();
         monsterDistances = new List<(float, Monster)>();
         // create a grid
         

@@ -65,7 +65,7 @@ public abstract class _Creature : _Entity
         movementVector.Set(x, y);
 
         // Temporary animation solution, remove type checking for other creatures to work
-        if (this is Player)
+        if (this is Player || this is Knight)
         {
             if (y > 0)
                 animator.SetTrigger("moveUp");

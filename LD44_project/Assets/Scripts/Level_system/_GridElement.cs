@@ -19,6 +19,7 @@ public abstract class _GridElement : MonoBehaviour
 
     protected virtual void Awake()
     {
+
     }
 
     protected virtual void Start()
