@@ -46,8 +46,8 @@ public abstract class _Agent : _Creature //, IWallet
 
     protected override void EndMovement()
     {
-        (_LevelController.instance.tiles[X, Y] as Floor).agent = this;
         base.EndMovement();
+        (_LevelController.instance.tiles[X, Y] as Floor).agent = this;
     }
 
     protected void RandomTileTarget()
@@ -89,12 +89,35 @@ public abstract class _Agent : _Creature //, IWallet
     {
         if (path != null && path.Count != 0)
         {
-            MoveTowards(path[pathProgress]);
-            if (pathProgress < path.Count - 1) pathProgress++;
-            else
+            int x = path[pathProgress].x - X;
+            int y = path[pathProgress].y - Y;
+            if (Mathf.Abs(x) > 1 || Mathf.Abs(y) > 1)
             {
-                pathProgress = 0;
-                RandomTileTarget();
+                Debug.Log("Agent " + ToString() + " tried to move wrongly! Trying to fix this issue.");
+                if (x > 1)
+                    x--;
+                else if (x < -1)
+                    x++;
+
+                if (y > 1)
+                    y--;
+                else if (y < -1)
+                    y++;
+                pathProgress--;
+                if (Mathf.Abs(x) <= 1 || Mathf.Abs(y) <= 1) Debug.Log("Path succesfully fixed.");
+                else throw new MoveByMoreThanOneTileException("Agent tried to move " + x + " " + y + " tiles, even after fixing.");
+            }
+
+            EvaluateMove(x, y);
+
+            if (monsterOutcome && knightOutcome && trapOutcome)
+            {
+                if (pathProgress < path.Count - 1) pathProgress++;
+                else
+                {
+                    pathProgress = 0;
+                    RandomTileTarget();
+                }
             }
         }
         else throw new EmptyPathfindingPath();
@@ -102,25 +125,7 @@ public abstract class _Agent : _Creature //, IWallet
 
     public void MoveTowards(PathFind.Point point)
     {
-        int x = point.x - (int)transform.position.x;
-        int y = point.y - (int)transform.position.y;
-        if(Mathf.Abs(x) > 1 || Mathf.Abs(y) > 1)
-        {
-            Debug.Log("Agent " + ToString() + " tried to move wrongly! Trying to fix this issue.");
-            if (x > 1)
-                x--;
-            else if (x < -1)
-                x++;
-
-            if (y > 1)
-                y--;
-            else if (y < -1)
-                y++;
-            pathProgress--;
-            if (Mathf.Abs(x) <= 1 || Mathf.Abs(y) <= 1) Debug.Log("Path succesfully fixed.");
-            else throw new MoveByMoreThanOneTileException("Agent tried to move " + x + " " + y + " tiles, even after fixing.");
-        }
-        EvaluateMove(x, y);
+        
     }
 
     public void Attack(_Agent opponent)

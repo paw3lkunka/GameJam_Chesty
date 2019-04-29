@@ -43,7 +43,7 @@ public class Knight : _Agent
 
     private new void Update()
     {
-        Debug.Log("Dist. to player: " + distanceToPlayer + " Dist. to monster: " + distanceToMonster.Item1);
+        //Debug.Log("Dist. to player: " + distanceToPlayer + " Dist. to monster: " + distanceToMonster.Item1);
         base.Update();
     }
 

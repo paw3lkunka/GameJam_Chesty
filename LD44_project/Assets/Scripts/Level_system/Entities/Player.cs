@@ -6,8 +6,6 @@ using static _OurLib;
 
 public class Player : _Creature
 {
-    [SerializeField]
-    private (bool state, int x, int y) coinsAutoCollect;
 
     public event Action LostEvent;
 
@@ -33,11 +31,6 @@ public class Player : _Creature
     protected override void Update()
     {
         base.Update();
-        
-        if (coinsAutoCollect.state)
-            CollectCoins();
-        if (coinsAutoCollect.x != X || coinsAutoCollect.y != Y)
-            coinsAutoCollect.state = true;
     }
 
     protected override void Translate(int x, int y)
