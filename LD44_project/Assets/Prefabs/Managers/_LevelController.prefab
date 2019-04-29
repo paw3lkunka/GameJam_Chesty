@@ -43,6 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1504f2f94760e7f49b4100ad77e67f99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  discoveredFogMask: {fileID: 21300000, guid: dc41e390180c5d64693f697e2ae6a4bd, type: 3}
+  undiscoveredFogMask: {fileID: 21300000, guid: e6a5dbb8de812c34881545e7c072c0ca,
+    type: 3}
   player: {fileID: 0}
   monsters: []
   knights: []

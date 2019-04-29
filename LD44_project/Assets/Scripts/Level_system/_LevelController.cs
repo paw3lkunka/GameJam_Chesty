@@ -10,6 +10,9 @@ public class _LevelController : MonoBehaviour
 {
     public static _LevelController instance;
 
+    public Sprite discoveredFogMask;
+    public Sprite undiscoveredFogMask;
+
     public Player player;
     public List<Monster> monsters;
     public List<Knight> knights;
