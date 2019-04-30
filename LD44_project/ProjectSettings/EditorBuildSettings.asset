@@ -10,10 +10,19 @@ EditorBuildSettings:
     guid: 435fc639824172b4f96096dd599f5099
   - enabled: 1
     path: Assets/Scenes/Level_0/Level_0.unity
-    guid: 9dd8d113e628e3d48abe9a6d0ecf371d
+    guid: 2db44f7bb192bfc4fa4d5cc02bb7707e
   - enabled: 1
     path: Assets/Scenes/Level_0/Level_1.unity
     guid: f52594c459a95704b87d319c1050c29d
+  - enabled: 1
+    path: Assets/Scenes/Level_0/Level_2.unity
+    guid: 89e0cdccc4666a947ba85299ac6f6f8b
+  - enabled: 1
+    path: Assets/Scenes/Level_0/Level_Bonus_BGC.unity
+    guid: 5c7d19b1a01945c449185624f6749888
+  - enabled: 1
+    path: Assets/Scenes/Level_0/Win.unity
+    guid: a7540711f70a80847b1860573ca3374c
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 7cbbed7247418dd45899597f4d537733,
       type: 2}

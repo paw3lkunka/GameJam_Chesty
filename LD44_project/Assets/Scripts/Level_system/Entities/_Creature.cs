@@ -18,7 +18,7 @@ public abstract class _Creature : _Entity
     protected (bool state, int x, int y) coinsAutoCollect;
     public int money = 1;
     public bool isMoving = false;
-    protected bool monsterOutcome = true, knightOutcome = true, trapOutcome = true;
+    protected bool monsterOutcome = true, knightOutcome = true, trapOutcome = true, playerOutcome = true;
     protected Vector2Int movementVector;
 
     private Vector2 startPos;
@@ -77,13 +77,13 @@ public abstract class _Creature : _Entity
                 animator.SetTrigger("moveLeft");
         }
 
-
         // Get the target tile reference
         _Tile targetTile = _LevelController.instance.tiles[X + x, Y + y];
 
         monsterOutcome = true;
         trapOutcome = true;
         knightOutcome = true;
+        playerOutcome = true;
 
         if (targetTile is Floor)
         {
@@ -100,6 +100,21 @@ public abstract class _Creature : _Entity
             else if (floor.agent is Knight)
             {
                 knightOutcome = DealWithKnight(floor.agent as Knight);
+            }
+            else if (this is Knight && _LevelController.instance.player.X == X && _LevelController.instance.player.Y == Y)
+            {
+                playerOutcome = DealWithPlayer();
+                if (playerOutcome == false)
+                {
+                    if (y > 0)
+                        animator.SetTrigger("attackUp");
+                    else if (y < 0)
+                        animator.SetTrigger("attackDown");
+                    else if (x > 0)          
+                        animator.SetTrigger("attackRight");
+                    else if (x < 0)          
+                        animator.SetTrigger("attackLeft");
+                }
             }
             
         }
@@ -128,7 +143,7 @@ public abstract class _Creature : _Entity
 
     protected void ExecuteMove()
     {
-        if (monsterOutcome && knightOutcome && trapOutcome)
+        if (monsterOutcome && knightOutcome && trapOutcome && playerOutcome)
         {
             Debug.Log("Executing succesful move from " + ToString());
             Translate(movementVector.x, movementVector.y);

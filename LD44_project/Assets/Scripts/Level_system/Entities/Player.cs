@@ -40,13 +40,13 @@ public class Player : _Creature
 
     public override bool DealWithTrap(Trap trap)
     {
-        money -= trap.Damage;
-        trap.isArmed = false;
+        money -= trap.Activate();
         return true;
     }
 
     public override bool DealWithKnight(Knight knight)
     {
+        knight.animator.SetTrigger("attack");
         money -= knight.AttackPoints;
         return false;
     }

@@ -21,9 +21,9 @@ public class LevelWinCondition : MonoBehaviour
         {
             winText.SetActive(true);
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.anyKey)
             {
-                SceneManager.LoadScene(2);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             }
         }
         else if(_LevelController.instance.player.money <= 0)
@@ -32,7 +32,7 @@ public class LevelWinCondition : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                SceneManager.LoadScene(1);
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
     }

@@ -23,7 +23,7 @@ public class MenuManager : MonoBehaviour
     }
     public void LaunchLevel3()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Level_0");//level3
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Level_2");//level3
     }
     
 }
