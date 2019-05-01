@@ -22,6 +22,11 @@ public class Player : _Creature
         LostEvent += _GameOver.GameOver;
     }
 
+    protected override void EndMovement()
+    {
+        base.EndMovement();
+    }
+
     public override void DropCoins(int amount)
     {
         coinsAutoCollect = (false, X, Y);

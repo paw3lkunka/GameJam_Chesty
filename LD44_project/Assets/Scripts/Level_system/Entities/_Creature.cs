@@ -10,10 +10,14 @@ public abstract class _Creature : _Entity
 {
 #pragma warning disable
 
+    // Movement interpolation speed variables
     [SerializeField] private float movementSpeed = 5f;
     [SerializeField] private AnimationCurve movementCurve;
 
 #pragma warning restore
+
+    protected _Tile targetTile;
+    protected _Tile currentTile;
 
     protected (bool state, int x, int y) coinsAutoCollect;
     public int money = 1;
@@ -48,6 +52,7 @@ public abstract class _Creature : _Entity
         endPos = new Vector2();
         startPos = new Vector2();
         movementVector = new Vector2Int();
+        currentTile = CurrentTile;
     }
 
     /// <summary>
@@ -78,21 +83,50 @@ public abstract class _Creature : _Entity
         }
 
         // Get the target tile reference
-        _Tile targetTile = _LevelController.instance.tiles[X + x, Y + y];
+        targetTile = _LevelController.instance.tiles[X + x, Y + y];
 
+        // Here starts the check if we can execute the movement in the desired direction
+        // If it's possible - the tile gets locked by setting appropiate reference in it's object
+
+        // Resetting evaluation values
         monsterOutcome = true;
         trapOutcome = true;
         knightOutcome = true;
         playerOutcome = true;
+    
+        // If target tile is a Door, then check if we can pass it and set reference accordingly
+        if (targetTile is Door)
+        {
+            // The door must be walkable first, if it really is - then execute deal with door and check if it succeded
+            if ((targetTile as Door).Walkable)
+            {
+                targetTile = _LevelController.instance.tiles[targetTile.X + x, targetTile.Y + y];
+                movementVector.Set(2 * x, 2 * y);
+            }
+            else if (DealWithDoor(targetTile as Door) == true)
+            {
+                // if can pass door - set reference for next tile and double the movement vector
+                targetTile = _LevelController.instance.tiles[targetTile.X + x, targetTile.Y + y];
+                movementVector.Set(2 * x, 2 * y);
+            }
+            else
+            {
+                // else just set movement vector to 0 and finish
+                movementVector.Set(0, 0);
+            }
+        }
 
         if (targetTile is Floor)
         {
             Floor floor = targetTile as Floor;
-            // Deal with things in way of our creature
-            if ( (floor.thing as Trap)?.isArmed ?? false) // if floor.thing is not null it returns .armed property, if it is null, it returns null (and doesn't throw NullReference) then null is treated as false (using ?? operator)
+
+            // Check for things in way of our creature
+            if ((floor.thing as Trap)?.isArmed ?? false) // if floor.thing is not null it returns .armed property, if it is null, it returns null (and doesn't throw NullReference) then null is treated as false (using ?? operator)
             {
                 trapOutcome = DealWithTrap(floor.thing as Trap);
             }
+
+            // Check for agents in way of our creature
             if (floor.agent is Monster)
             {
                 monsterOutcome = DealWithMonster(floor.agent as Monster);
@@ -101,44 +135,20 @@ public abstract class _Creature : _Entity
             {
                 knightOutcome = DealWithKnight(floor.agent as Knight);
             }
-            else if (this is Knight && _LevelController.instance.player.X == X && _LevelController.instance.player.Y == Y)
+            else if (floor.player != null)
             {
                 playerOutcome = DealWithPlayer();
-                if (playerOutcome == false)
-                {
-                    if (y > 0)
-                        animator.SetTrigger("attackUp");
-                    else if (y < 0)
-                        animator.SetTrigger("attackDown");
-                    else if (x > 0)          
-                        animator.SetTrigger("attackRight");
-                    else if (x < 0)          
-                        animator.SetTrigger("attackLeft");
-                }
             }
-            
-        }
-        else if(targetTile is Door)
-        {
-            if ((targetTile as Door).Walkable)
+
+            if (monsterOutcome && knightOutcome && trapOutcome && playerOutcome)
             {
-                movementVector.Set(2 * x, 2 * y);
+                floor.AssignEntity(this);
             }
-            else if (DealWithDoor(targetTile as Door) == true)
-            {
-                movementVector.Set(2 * x, 2 * y);
-            }
-            else
-            {
-                movementVector.Set(0, 0);
-            }
-            //else throw new NotImplementedException("Bad operation on door executed by " + ToString());
         }
         else
         {
             movementVector.Set(0, 0);
         }
-
     }
 
     protected void ExecuteMove()
@@ -166,12 +176,16 @@ public abstract class _Creature : _Entity
 
     protected virtual void EndMovement()
     {
-        isMoving = false;
+        (currentTile as Floor)?.RemoveEntity(this);
+        currentTile = targetTile;
+        targetTile = null;
 
         if (coinsAutoCollect.state)
             CollectCoins();
         if (coinsAutoCollect.x != X || coinsAutoCollect.y != Y)
             coinsAutoCollect.state = true;
+
+        isMoving = false;
     }
 
     /// <summary>

@@ -17693,6 +17693,10 @@ PrefabInstance:
       propertyPath: loseText
       value: 
       objectReference: {fileID: 1117968084}
+    - target: {fileID: 1736779770, guid: 92816b4655e7da5408d1577dbcd4dd60, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 889c7b49cf253434885dacbdef85db55, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 92816b4655e7da5408d1577dbcd4dd60, type: 3}
 --- !u!20 &1564517722 stripped

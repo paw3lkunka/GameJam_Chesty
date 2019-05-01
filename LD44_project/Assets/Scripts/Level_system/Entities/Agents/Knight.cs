@@ -140,6 +140,11 @@ public class Knight : _Agent
         }
     }
 
+    protected override void EndMovement()
+    {
+        base.EndMovement();
+    }
+
     private static int CompareMonsters( (float, Monster) monsterA, (float, Monster) monsterB )
     {
         return (int)(monsterB.Item1 - monsterA.Item1);
@@ -192,7 +197,16 @@ public class Knight : _Agent
 
     public override bool DealWithPlayer()
     {
-        animator.SetTrigger("attack");
+        // Attack animation handling here:
+        if (movementVector.y > 0)
+            animator.SetTrigger("attackUp");
+        else if (movementVector.y < 0)
+            animator.SetTrigger("attackDown");
+        else if (movementVector.x > 0)
+            animator.SetTrigger("attackRight");
+        else if (movementVector.x < 0)
+            animator.SetTrigger("attackLeft");
+
         _LevelController.instance.player.money -= attack;
         return false;
     }
